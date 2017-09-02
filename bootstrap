@@ -1,0 +1,227 @@
+#!/usr/bin/env python3
+from argparse import ArgumentParser
+from sys import argv, stdin, stdout, stderr
+from subprocess import Popen as Subprocess, PIPE as pipe
+from shutil import which, move, copytree
+from os.path import isabs, abspath, expanduser, join as pjoin, exists, dirname
+from os import fdopen, remove, getcwd
+from tempfile import mkstemp
+
+subprocess_streams = {
+    "stdin" : stdin,
+    "stdout": stderr,
+    "stderr": stderr,
+}
+
+root = dirname(abspath(argv[0]))
+cwd = getcwd()
+
+# There are files with source code which are templates
+# by their nature, but there are too much files to list them
+# explicitly, they will be listed by find().
+templates = [
+    "docker-compose.yml",
+    "README.md",
+    ".go-makefile.json",
+    "Makefile"
+]
+
+# This files should be removed from the bootstraped project.
+discard = [
+    "bootstrap"
+]
+
+def run(executable, arguments, streams=subprocess_streams, **kwargs):
+    path = executable
+    if not isabs(executable):
+        path = which(executable)
+
+    nkwargs = kwargs.copy()
+    nkwargs.update(streams)
+    return Subprocess(
+        [path] + arguments,
+        **nkwargs
+    )
+
+def find(directory, name):
+    c = run(
+        "find",
+        [
+            directory,
+            "-name", name
+        ],
+        streams={
+            "stdin": stdin,
+            "stdout": pipe,
+            "stderr": stderr
+        }
+    )
+
+    return [
+        v.decode("utf-8")
+        for v in c.communicate()[0].split(b"\n")
+        if v.strip()
+    ]
+
+def replace(path, pattern, replacement):
+    handle, temporary_path = mkstemp()
+    with fdopen(handle, "w") as output:
+        with open(path, "r") as input:
+            for line in input:
+                output.write(
+                    line.replace(
+                        pattern,
+                        replacement
+                    )
+                )
+        remove(path)
+    move(
+        temporary_path,
+        path
+    )
+
+def replace_multiple(path, pattern_replacements):
+    handle, temporary_path = mkstemp()
+    with fdopen(handle, "w") as output:
+        with open(path, "r") as input:
+            for line in input:
+                new_line = line
+                for pattern, replacement in pattern_replacements.items():
+                    new_line = new_line.replace(
+                        pattern,
+                        replacement
+                    )
+                output.write(new_line)
+        remove(path)
+    move(
+        temporary_path,
+        path
+    )
+
+def get_files(cwd):
+    return  [
+        pjoin(cwd, v)
+        for v in templates
+    ] + [
+        v
+        for v in find(cwd, "*.go")
+        if not v.startswith(
+                pjoin(cwd, "vendor")
+        )
+    ]
+
+def expand_args(args):
+    nargs = args.copy()
+
+    nargs["target"] = expand(args["target"])
+    return nargs
+
+def expand(v):
+    return abspath(
+        expanduser(
+            v
+        )
+    )
+
+def main(args):
+    target = args["target"]
+
+    if exists(target):
+        raise RuntimeError(
+            "Destination '{}' already exists".format(
+                target
+            )
+        )
+
+    stderr.write(
+        "Copying boilerplate into {}\n".format(target)
+    )
+    copytree(
+        root,
+        target,
+        symlinks=True
+    )
+
+    files = get_files(target)
+
+    for v in files:
+        stderr.write(
+            "Templating {}\n".format(v)
+        )
+        replace_multiple(
+            v,
+            {
+                # First two lines are a bit hacky.
+                # Dicts are unordered but replacements should be ordered in this case,
+                # so we replace both variants.
+                "github.com/corpix/go-boilerplate": "{host}/{user}/{name}".format(**args),
+                "github.com/corpix/" + args["name"]: "{host}/{user}/{name}".format(**args),
+
+                "travis-ci.org/corpix/go-boilerplate": "travis-ci.org/{user}/{name}".format(**args),
+                "go-boilerplate": args["name"],
+                "go-boilerplate-description": args["description"],
+            }
+        )
+
+    for v in discard:
+        remove(
+            pjoin(
+                target,
+                v
+            )
+        )
+
+    stderr.write(
+        "Removing boilerplate 'origin' remote from the project...\n"
+    )
+    run(
+        "git",
+        [
+            "remote",
+            "rm",
+            "origin",
+        ],
+        cwd=target
+    )
+
+    stderr.write(
+        "Bootstraped new project in {}\n".format(
+            target
+        )
+    )
+
+
+if __name__ == "__main__":
+    p = ArgumentParser(
+        description="Bootstrap a project from the boilerplate"
+    )
+    p.add_argument(
+        "target",
+        help="Target directory to create project in"
+    )
+    p.add_argument(
+        "--name",
+        help="Project name",
+        required=True
+    )
+    p.add_argument(
+        "--user",
+        help="Project user/org to use in imports",
+        default="corpix"
+    )
+    p.add_argument(
+        "--host",
+        help="Project host to use in imports",
+        default="github.com"
+    )
+    p.add_argument(
+        "--description",
+        help="Project description to hardcode into",
+        default=""
+    )
+
+    main(
+        expand_args(
+            p.parse_args().__dict__
+        )
+    )

@@ -1,0 +1,14 @@
+version: "2"
+services:
+  go-boilerplate:
+    image: go-boilerplate
+    build: .
+    volumes:
+      - ./build/go-boilerplate:/usr/bin/go-boilerplate
+      - ./config.json:/etc/go-boilerplate/config.json
+    command: >-
+      /usr/bin/go-boilerplate
+      --config /etc/go-boilerplate/config.json
+      --debug
+    ports: []
+    links: []
