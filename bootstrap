@@ -170,6 +170,11 @@ def main(args):
         )
 
     for v in discard:
+        stderr.write(
+            "Discarding boilerplate file {}\n".format(
+                v
+            )
+        )
         remove(
             pjoin(
                 target,
