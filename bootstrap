@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from sys import argv, stdin, stdout, stderr
 from subprocess import Popen as Subprocess, PIPE as pipe
 from shutil import which, move, copytree
+from json import load as unmarshal_json, dump as marshal_json
 from os.path import isabs, abspath, expanduser, join as pjoin, exists, dirname
 from os import fdopen, remove, getcwd
 from tempfile import mkstemp
@@ -164,11 +165,26 @@ def main(args):
                 # so we replace both variants.
                 "github.com/corpix/go-boilerplate": "{host}/{user}/{name}".format(**args),
                 "github.com/corpix/" + args["name"]: "{host}/{user}/{name}".format(**args),
+                "github.com/corpix/$(name)": "{host}/{user}/{name}".format(**args),
 
                 "travis-ci.org/corpix/go-boilerplate": "travis-ci.org/{user}/{name}".format(**args),
                 "go-boilerplate": args["name"],
                 "go-boilerplate-description": args["description"],
             }
+        )
+
+    with open(pjoin(target, ".go-makefile.json"), "r") as stream:
+        makefile_config = unmarshal_json(stream)
+    makefile_config["host"] = args["host"]
+    makefile_config["user"] = args["user"]
+    makefile_config["name"] = args["name"]
+    with open(pjoin(target, ".go-makefile.json"), "w") as stream:
+        marshal_json(
+            makefile_config,
+            stream,
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=4
         )
 
     for v in discard:
