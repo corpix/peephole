@@ -216,7 +216,7 @@ def main(args):
             "origin",
         ],
         cwd=target
-    )
+    ).wait()
 
     stderr.write(
         "Bootstraped new project in {}\n".format(
