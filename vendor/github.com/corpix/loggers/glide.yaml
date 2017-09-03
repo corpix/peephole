@@ -1,0 +1,6 @@
+package: github.com/corpix/logger
+import:
+- package: github.com/nsqio/go-nsq
+  version: v1.0.6
+- package: github.com/sirupsen/logrus
+  version: v1.0.1

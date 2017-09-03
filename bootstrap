@@ -10,7 +10,7 @@ from tempfile import mkstemp
 subprocess_streams = {
     "stdin" : stdin,
     "stdout": stderr,
-    "stderr": stderr,
+    "stderr": stderr
 }
 
 root = dirname(abspath(argv[0]))
@@ -23,7 +23,9 @@ templates = [
     "docker-compose.yml",
     "README.md",
     ".go-makefile.json",
-    "Makefile"
+    "Makefile",
+    "glide.yaml",
+    "glide.lock"
 ]
 
 # This files should be removed from the bootstraped project.

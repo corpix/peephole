@@ -1,0 +1,16 @@
+hash: efaf77042084a909c18897f2fc6228e145abf83fdeb32b2e4102726ed84683bc
+updated: 2017-08-24T22:59:03.759505658Z
+imports:
+- name: github.com/mreiferson/go-snappystream
+  version: 028eae7ab5c4c9e2d1cb4c4ca1e53259bbe7e504
+  subpackages:
+  - snappy-go
+- name: github.com/nsqio/go-nsq
+  version: d71fb89c9e0263aaed89645b0b168e11ccf597b1
+- name: github.com/sirupsen/logrus
+  version: 7f976d3a76720c4c27af2ba716b85d2e0a7e38b1
+- name: golang.org/x/sys
+  version: 07c182904dbd53199946ba614a412c61d3c548f5
+  subpackages:
+  - unix
+testImports: []

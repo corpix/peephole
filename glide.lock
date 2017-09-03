@@ -1,0 +1,26 @@
+hash: 63f5cdd9e738ef9f31e5854674887b67be4ca983f447da1212b7e625273d861b
+updated: 2017-09-03T11:26:06.451766722Z
+imports:
+- name: github.com/corpix/formats
+  version: db532770e3ecf9dfe31ce2f7bf30c1c26f67e417
+- name: github.com/corpix/loggers
+  version: d5c1e84397f24c1cde4386e0cc158f2dbc49e54f
+  subpackages:
+  - logger/logrus
+- name: github.com/davecgh/go-spew
+  version: a476722483882dd40b8111f0eb64e1d7f43f56e4
+  subpackages:
+  - spew
+- name: github.com/imdario/mergo
+  version: e3000cb3d28c72b837601cac94debd91032d19fe
+- name: github.com/sirupsen/logrus
+  version: 7f976d3a76720c4c27af2ba716b85d2e0a7e38b1
+- name: github.com/urfave/cli
+  version: f017f86fccc5a039a98f23311f34fdf78b014f78
+- name: golang.org/x/sys
+  version: 7ddbeae9ae08c6a06a59597f0c9edbc5ff2444ce
+  subpackages:
+  - unix
+- name: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+testImports: []
