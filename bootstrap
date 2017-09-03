@@ -218,6 +218,12 @@ def main(args):
         cwd=target
     ).wait()
 
+    run(
+        "make",
+        [],
+        cwd=target
+    ).wait()
+
     stderr.write(
         "Bootstraped new project in {}\n".format(
             target
