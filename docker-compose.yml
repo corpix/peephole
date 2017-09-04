@@ -4,8 +4,8 @@ services:
     image: go-boilerplate
     build: .
     volumes:
-      - ./build/go-boilerplate:/usr/bin/go-boilerplate
-      - ./config.json:/etc/go-boilerplate/config.json
+      - ./build/go-boilerplate:/usr/bin/go-boilerplate:ro
+      - ./config.json:/etc/go-boilerplate/config.json:ro
     command: >-
       /usr/bin/go-boilerplate
       --config /etc/go-boilerplate/config.json
