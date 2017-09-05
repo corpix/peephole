@@ -65,6 +65,7 @@ func Execute() {
 
 // initConfig reads in config file.
 func initConfig(c *cli.Context) error {
+	// FIXME: Tilde expansion?
 	path := os.ExpandEnv(c.String("config"))
 	err := config.FromFile(path, Config)
 	if err != nil {
