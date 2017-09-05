@@ -14,7 +14,8 @@ import (
 var (
 	// LoggerConfig represents default logger config.
 	LoggerConfig = logger.Config{
-		Level: "info",
+		Level:     "info",
+		Formatter: "json",
 	}
 
 	// Default represents default application config.
