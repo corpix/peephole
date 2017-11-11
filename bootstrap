@@ -22,6 +22,7 @@ cwd = getcwd()
 # explicitly, they will be listed by find().
 templates = [
     "docker-compose.yml",
+    "Dockerfile",
     "README.md",
     ".go-makefile.json",
     "Makefile",
