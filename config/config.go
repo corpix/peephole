@@ -29,37 +29,57 @@ type Config struct {
 	Logger logger.Config
 }
 
-// FromReader fills Config structure `c` passed by reference with
-// parsed config data in some `f` from reader `r`.
+// FromReader returns parsed config data in some `f` from reader `r`.
 // It copies `Default` into the target structure before unmarshaling
 // config, so it will have default values.
-func FromReader(f formats.Format, r io.Reader, c *Config) error {
-	data, err := ioutil.ReadAll(r)
+func FromReader(f formats.Format, r io.Reader) (Config, error) {
+	var (
+		c   Config
+		buf []byte
+		err error
+	)
+
+	buf, err = ioutil.ReadAll(r)
 	if err != nil {
-		return err
+		return c, err
 	}
 
-	err = mergo.Merge(c, Default)
+	err = mergo.Merge(&c, Default)
 	if err != nil {
-		return err
+		return c, err
 	}
 
-	return f.Unmarshal(data, c)
+	err = f.Unmarshal(buf, &c)
+	if err != nil {
+		return c, err
+	}
+
+	return c, nil
 }
 
-// FromFile fills Config structure `c` passed by reference with
-// parsed config data from file in `path`.
-func FromFile(path string, c *Config) error {
-	f, err := formats.NewFromPath(path)
+// FromFile returns parsed config data from file in `path`.
+func FromFile(path string) (Config, error) {
+	var (
+		c   Config
+		f   formats.Format
+		r   io.ReadWriteCloser
+		err error
+	)
+	f, err = formats.NewFromPath(path)
 	if err != nil {
-		return err
+		return c, err
 	}
 
-	r, err := os.Open(path)
+	r, err = os.Open(path)
 	if err != nil {
-		return err
+		return c, err
 	}
 	defer r.Close()
 
-	return FromReader(f, r, c)
+	c, err = FromReader(f, r)
+	if err != nil {
+		return c, err
+	}
+
+	return c, nil
 }
