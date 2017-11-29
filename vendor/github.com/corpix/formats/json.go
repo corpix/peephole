@@ -5,7 +5,7 @@ import (
 )
 
 // JSONFormat is a JSON marshaler.
-type JSONFormat uint8
+type JSONFormat struct{}
 
 // Marshal serializes data represented by v into slice of bytes.
 func (j *JSONFormat) Marshal(v interface{}) ([]byte, error) {
@@ -24,4 +24,4 @@ func (j *JSONFormat) Name() string {
 }
 
 // NewJSON constructs a new JSON format marshaler.
-func NewJSON() *JSONFormat { return new(JSONFormat) }
+func NewJSON() *JSONFormat { return &JSONFormat{} }

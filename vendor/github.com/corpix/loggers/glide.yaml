@@ -1,6 +1,8 @@
-package: github.com/corpix/logger
+package: github.com/corpix/loggers
 import:
 - package: github.com/nsqio/go-nsq
-  version: v1.0.6
 - package: github.com/sirupsen/logrus
-  version: v1.0.1
+testImport:
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert

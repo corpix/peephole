@@ -5,7 +5,7 @@ import (
 )
 
 // YAMLFormat is a YAML marshaler.
-type YAMLFormat uint8
+type YAMLFormat struct{}
 
 // Marshal serializes data represented by v into slice of bytes.
 func (y *YAMLFormat) Marshal(v interface{}) ([]byte, error) {
@@ -24,4 +24,4 @@ func (y *YAMLFormat) Name() string {
 }
 
 // NewYAML constructs a new YAML format marshaler.
-func NewYAML() *YAMLFormat { return new(YAMLFormat) }
+func NewYAML() *YAMLFormat { return &YAMLFormat{} }

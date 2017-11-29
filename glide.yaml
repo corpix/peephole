@@ -7,5 +7,6 @@ import:
 - package: github.com/davecgh/go-spew
   subpackages:
   - spew
+- package: github.com/go-playground/validator
 - package: github.com/imdario/mergo
 - package: github.com/urfave/cli

@@ -9,6 +9,7 @@ Supported formats:
 
 - `JSON`
 - `YAML`
+- `TOML`
 
 ## Example
 
@@ -55,14 +56,24 @@ func main() {
 ```
 
 ``` console
-$ go run ./example/json-to-yaml.go
+$ go run ./example/json-to-yaml/json-to-yaml.go
 name: Danny
 roles:
-- warrior
-- worker
+- name: warrior
+- name: worker
+
+$ go run ./example/json-to-toml/json-to-toml.go
+name = "Danny"
+
+[[roles]]
+name = "warrior"
+
+[[roles]]
+name = "worker"
+
 ```
 
-## Compatibility
+## Limitations
 
 There is a compatibility layer for:
 
@@ -75,6 +86,12 @@ There is a compatibility layer for:
 There is no good workaround for this at the time of writing. Make sure you have tags for your struct field.
 
 > Actualy I'd like to switch to more configurable yaml marshaler in the future, but at this time there is nothing better :(
+
+### TOML
+
+[toml](https://github.com/naoina/toml) can not marshal `interface{}` values at this time(panics, requires struct or map).
+
+> Which is strange, probably some reflection misuse.
 
 ## License
 

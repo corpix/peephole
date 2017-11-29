@@ -6,27 +6,25 @@ import (
 	"os"
 
 	"github.com/corpix/formats"
+	"github.com/go-playground/validator"
 	"github.com/imdario/mergo"
 
 	"github.com/corpix/go-boilerplate/logger"
 )
 
 var (
-	// LoggerConfig represents default logger config.
-	LoggerConfig = logger.Config{
-		Level:     "info",
-		Formatter: "json",
-	}
-
 	// Default represents default application config.
 	Default = Config{
-		Logger: LoggerConfig,
+		Logger: logger.Config{
+			Level:     "info",
+			Formatter: "json",
+		},
 	}
 )
 
 // Config represents application configuration structure.
 type Config struct {
-	Logger logger.Config
+	Logger logger.Config `validate:"required"`
 }
 
 // FromReader returns parsed config data in some `f` from reader `r`.
@@ -34,9 +32,10 @@ type Config struct {
 // config, so it will have default values.
 func FromReader(f formats.Format, r io.Reader) (Config, error) {
 	var (
-		c   Config
-		buf []byte
-		err error
+		validate = validator.New()
+		c        Config
+		buf      []byte
+		err      error
 	)
 
 	buf, err = ioutil.ReadAll(r)
@@ -50,6 +49,11 @@ func FromReader(f formats.Format, r io.Reader) (Config, error) {
 	}
 
 	err = f.Unmarshal(buf, &c)
+	if err != nil {
+		return c, err
+	}
+
+	err = validate.Struct(c)
 	if err != nil {
 		return c, err
 	}

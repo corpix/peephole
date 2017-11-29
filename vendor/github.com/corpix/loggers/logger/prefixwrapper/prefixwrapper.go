@@ -13,37 +13,37 @@ type PrefixWrapper struct {
 	log          loggers.Logger
 }
 
-func (w *PrefixWrapper) Write(rawMessage []byte) (int, error) {
+func (l *PrefixWrapper) Write(rawMessage []byte) (int, error) {
 	var (
 		message = make(
 			[]byte,
-			len(w.bytePrefix)+len(rawMessage),
+			len(l.bytePrefix)+len(rawMessage),
 		)
 	)
 
-	copy(message, w.bytePrefix)
-	copy(message[len(w.bytePrefix):], rawMessage)
+	copy(message, l.bytePrefix)
+	copy(message[len(l.bytePrefix):], rawMessage)
 
-	return w.log.Write(message)
+	return l.log.Write(message)
 }
 
-func (w *PrefixWrapper) Debugf(rawMessage string, xs ...interface{}) {
-	w.log.Debugf(w.stringPrefix+rawMessage, xs)
+func (l *PrefixWrapper) Debugf(rawMessage string, xs ...interface{}) {
+	l.log.Debugf(l.stringPrefix+rawMessage, xs...)
 }
 
-func (w *PrefixWrapper) Printf(rawMessage string, xs ...interface{}) {
-	w.log.Printf(w.stringPrefix+rawMessage, xs)
+func (l *PrefixWrapper) Printf(rawMessage string, xs ...interface{}) {
+	l.log.Printf(l.stringPrefix+rawMessage, xs...)
 }
 
-func (w *PrefixWrapper) Errorf(rawMessage string, xs ...interface{}) {
-	w.log.Errorf(w.stringPrefix+rawMessage, xs)
+func (l *PrefixWrapper) Errorf(rawMessage string, xs ...interface{}) {
+	l.log.Errorf(l.stringPrefix+rawMessage, xs...)
 }
 
-func (w *PrefixWrapper) Fatalf(rawMessage string, xs ...interface{}) {
-	w.log.Fatalf(w.stringPrefix+rawMessage, xs)
+func (l *PrefixWrapper) Fatalf(rawMessage string, xs ...interface{}) {
+	l.log.Fatalf(l.stringPrefix+rawMessage, xs...)
 }
 
-func (w *PrefixWrapper) Debug(rawXs ...interface{}) {
+func (l *PrefixWrapper) Debug(rawXs ...interface{}) {
 	var (
 		xs = make(
 			[]interface{},
@@ -51,13 +51,13 @@ func (w *PrefixWrapper) Debug(rawXs ...interface{}) {
 		)
 	)
 
-	xs[0] = w.stringPrefix
+	xs[0] = l.stringPrefix
 	copy(xs[1:], rawXs)
 
-	w.log.Debug(xs...)
+	l.log.Debug(xs...)
 }
 
-func (w *PrefixWrapper) Print(rawXs ...interface{}) {
+func (l *PrefixWrapper) Print(rawXs ...interface{}) {
 	var (
 		xs = make(
 			[]interface{},
@@ -65,13 +65,13 @@ func (w *PrefixWrapper) Print(rawXs ...interface{}) {
 		)
 	)
 
-	xs[0] = w.stringPrefix
+	xs[0] = l.stringPrefix
 	copy(xs[1:], rawXs)
 
-	w.log.Print(xs...)
+	l.log.Print(xs...)
 }
 
-func (w *PrefixWrapper) Error(rawXs ...interface{}) {
+func (l *PrefixWrapper) Error(rawXs ...interface{}) {
 	var (
 		xs = make(
 			[]interface{},
@@ -79,13 +79,13 @@ func (w *PrefixWrapper) Error(rawXs ...interface{}) {
 		)
 	)
 
-	xs[0] = w.stringPrefix
+	xs[0] = l.stringPrefix
 	copy(xs[1:], rawXs)
 
-	w.log.Error(xs...)
+	l.log.Error(xs...)
 }
 
-func (w *PrefixWrapper) Fatal(rawXs ...interface{}) {
+func (l *PrefixWrapper) Fatal(rawXs ...interface{}) {
 	var (
 		xs = make(
 			[]interface{},
@@ -93,10 +93,10 @@ func (w *PrefixWrapper) Fatal(rawXs ...interface{}) {
 		)
 	)
 
-	xs[0] = w.stringPrefix
+	xs[0] = l.stringPrefix
 	copy(xs[1:], rawXs)
 
-	w.log.Fatal(xs...)
+	l.log.Fatal(xs...)
 }
 
 // New wraps Logger with PrefixWrapper.
