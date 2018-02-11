@@ -21,6 +21,7 @@ cwd = getcwd()
 # by their nature, but there are too much files to list them
 # explicitly, they will be listed by find().
 templates = [
+    "default.nix",
     "docker-compose.yml",
     "Dockerfile",
     "README.md",
