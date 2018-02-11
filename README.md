@@ -35,9 +35,7 @@ New project in `$GOPATH/src/github.com/corpix/test` is waiting for you :)
 
 ## Development
 
-All development process accompanied by containers. Docker containers used for development, Rkt containers used for production.
-
-> I am a big fan of Rkt, but it could be comfortable for other developers to use Docker for development and testing.
+All development process accompanied by containers(docker).
 
 ## Optional requirements
 
@@ -46,10 +44,7 @@ If you plan to use some containerisation then you should have:
 - [docker](https://github.com/moby/moby)
 - [docker-compose](https://github.com/docker/compose)
 
-Or:
-
-- [rkt](https://github.com/coreos/rkt)
-- [acbuild](https://github.com/containers/build)
+> Or if you use nixos(or have bubblewrap+nix on linux) you could use [nix-cage](https://github.com/corpix/nix-cage)
 
 ### Running go-boilerplate
 
@@ -65,10 +60,6 @@ $ GOOS=linux make
 ``` console
 $ docker-compose up go-boilerplate
 ```
-
-#### Rkt
-
-There is no rkt container for this service at this time.
 
 #### No isolation
 
