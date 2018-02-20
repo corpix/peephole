@@ -1,6 +1,6 @@
 with import <nixpkgs> {};
 stdenv.mkDerivation {
-  name = "gluttony-shell";
+  name = "nix-cage-shell";
   buildInputs = [
     go
     gocode
