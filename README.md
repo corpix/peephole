@@ -5,7 +5,7 @@ go-boilerplate
 
 ## Bootstrap
 
-I have wrote a bootstrap script for you. It is wrote in python. Here is a CLI help:
+I have written a bootstrap script in Python for you. Here is a CLI help:
 
 ``` console
 $ ./bootstrap -h
