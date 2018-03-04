@@ -89,7 +89,7 @@ func initLogger(c *cli.Context) error {
 		Config.Logger.Level = "debug"
 	}
 
-	log, err = appLogger.New(Config.Logger)
+	log, err = appLogger.FromConfig(Config.Logger)
 	if err != nil {
 		return err
 	}
