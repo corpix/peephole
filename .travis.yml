@@ -1,7 +1,21 @@
-language: go
+language: nix
+script: |
+  bash -c '
+    set -e
+    set -x
 
-go:
-  - 1.8
-  - master
+    nixpkgs_rev=bea585cf420f7744441d6c7297fafb9401bd3c6d
 
-script: make test
+    curl -L https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz | tar -xz -C $HOME
+
+    export NIX_PATH=nixpkgs=$HOME/nixpkgs-${nixpkgs_rev}
+    export SENTRY=""
+    export WS_ENDPOINT=""
+    export HTTP_ENDPOINT=""
+
+    nix-shell --command "make test"
+  '
+
+cache:
+  directories:
+    - /nix
