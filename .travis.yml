@@ -16,7 +16,7 @@ script: |
     gopath_location="$HOME/projects/src/github.com/corpix/go-boilerplate"
 
     mkdir -p "$(dirname "$gopath_location")"
-    [ -e "$gopath_location" ] || ln -s "$gopath_location" $(pwd)
+    [ -e "$gopath_location" ] || ln -s $(pwd) "$gopath_location"
 
     nix-shell --command "make test"
   '
