@@ -13,9 +13,13 @@ script: |
     export WS_ENDPOINT=""
     export HTTP_ENDPOINT=""
 
+    mkdir -p ~/projects/src/github.com/corpix
+    ln -s ~/projects/src/github.com/corpix/go-boilerplate $(pwd)
+
     nix-shell --command "make test"
   '
 
 cache:
   directories:
     - /nix
+    - ~/projects

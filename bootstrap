@@ -26,6 +26,7 @@ templates = [
     "Dockerfile",
     "README.md",
     ".go-makefile.json",
+    ".travis.yml",
     "Makefile",
     "glide.yaml",
     "glide.lock"
