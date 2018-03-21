@@ -13,8 +13,10 @@ script: |
     export WS_ENDPOINT=""
     export HTTP_ENDPOINT=""
 
-    mkdir -p ~/projects/src/github.com/corpix
-    ln -s ~/projects/src/github.com/corpix/go-boilerplate $(pwd)
+    gopath_location="$HOME/projects/src/github.com/corpix/go-boilerplate"
+
+    mkdir -p "$(dirname "$gopath_location")"
+    [ -e "$gopath_location" ] || ln -s "$gopath_location" $(pwd)
 
     nix-shell --command "make test"
   '
