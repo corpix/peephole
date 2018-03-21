@@ -1,6 +1,3 @@
 {
-    "Logger": {
-        "Level": "info",
-        "Formatter": "json"
-    }
+  "Logger": {}
 }

@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/corpix/formats"
+	"github.com/creasty/defaults"
 	"github.com/go-playground/validator"
 	"github.com/imdario/mergo"
 
@@ -24,7 +25,7 @@ var (
 
 // Config represents application configuration structure.
 type Config struct {
-	Logger logger.Config `validate:"required"`
+	Logger logger.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"json\"}"`
 }
 
 // FromReader returns parsed config data in some `f` from reader `r`.
@@ -49,6 +50,11 @@ func FromReader(f formats.Format, r io.Reader) (Config, error) {
 	}
 
 	err = f.Unmarshal(buf, &c)
+	if err != nil {
+		return c, err
+	}
+
+	err = defaults.Set(&c)
 	if err != nil {
 		return c, err
 	}
