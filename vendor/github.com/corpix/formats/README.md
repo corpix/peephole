@@ -3,7 +3,10 @@ formats
 
 [![Build Status](https://travis-ci.org/corpix/formats.svg?branch=master)](https://travis-ci.org/corpix/formats)
 
-This package provides a consistent API to transform same data(represented by some `struct`) between arbitrary formats.
+This package provides:
+
+- command-line tool which converts stdin from format A to format B
+- library with consistent API to transform data from format A to format B
 
 Supported formats:
 
@@ -11,7 +14,23 @@ Supported formats:
 - `YAML`
 - `TOML`
 
-## Example
+## Command-line tool example
+
+``` console
+$ go get -u github.com/corpix/formats/...
+...
+
+$ echo '{"hello": ["world", {"of": "foo", "bar": true}]}' | formats --from json --to yaml
+hello:
+- world
+- bar: true
+  of: foo
+
+$ echo '{"hello": ["world", {"of": "foo", "bar": true}]}' | formats --from json --to yaml | formats --from yaml --to json
+{"hello":["world",{"bar":"true","of":"foo"}]}
+```
+
+## Library usage example
 
 This will convert JSON to YAML:
 

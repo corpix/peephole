@@ -4,6 +4,7 @@ import:
 - package: github.com/corpix/loggers
   subpackages:
   - logger/logrus
+- package: github.com/creasty/defaults
 - package: github.com/davecgh/go-spew
   subpackages:
   - spew

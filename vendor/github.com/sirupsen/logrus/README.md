@@ -250,6 +250,7 @@ Note: Syslog hook also support connecting to local syslog (Ex. "/dev/log" or "/v
 | [Application Insights](https://github.com/jjcollinge/logrus-appinsights) | Hook for logging to [Application Insights](https://azure.microsoft.com/en-us/services/application-insights/)
 | [AzureTableHook](https://github.com/kpfaulkner/azuretablehook/) | Hook for logging to Azure Table Storage|
 | [Bugsnag](https://github.com/Shopify/logrus-bugsnag/blob/master/bugsnag.go) | Send errors to the Bugsnag exception tracking service. |
+| [ClickHouse](https://github.com/oxgrouby/logrus-clickhouse-hook) | Send logs to [ClickHouse](https://clickhouse.yandex/) |
 | [DeferPanic](https://github.com/deferpanic/dp-logrus) | Hook for logging to DeferPanic |
 | [Discordrus](https://github.com/kz/discordrus) | Hook for logging to [Discord](https://discordapp.com/) |
 | [ElasticSearch](https://github.com/sohlich/elogrus) | Hook for logging to ElasticSearch|
@@ -263,6 +264,7 @@ Note: Syslog hook also support connecting to local syslog (Ex. "/dev/log" or "/v
 | [Influxus](http://github.com/vlad-doru/influxus) | Hook for concurrently logging to [InfluxDB](http://influxdata.com/) |
 | [Journalhook](https://github.com/wercker/journalhook) | Hook for logging to `systemd-journald` |
 | [KafkaLogrus](https://github.com/tracer0tong/kafkalogrus) | Hook for logging to Kafka |
+| [Kafka REST Proxy](https://github.com/Nordstrom/logrus-kafka-rest-proxy) | Hook for logging to [Kafka REST Proxy](https://docs.confluent.io/current/kafka-rest/docs) |
 | [LFShook](https://github.com/rifflock/lfshook) | Hook for logging to the local filesystem |
 | [Logbeat](https://github.com/macandmia/logbeat) | Hook for logging to [Opbeat](https://opbeat.com/) |
 | [Logentries](https://github.com/jcftang/logentriesrus) | Hook for logging to [Logentries](https://logentries.com/) |
