@@ -4,7 +4,7 @@ script: |
     set -e
     set -x
 
-    nixpkgs_rev=bea585cf420f7744441d6c7297fafb9401bd3c6d
+    nixpkgs_rev=a682ba23d49cd13c92922af3d5dc44efd60ae9e7
 
     curl -L https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz | tar -xz -C $HOME
 
