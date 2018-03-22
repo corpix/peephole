@@ -13,6 +13,9 @@ script: |
     export WS_ENDPOINT=""
     export HTTP_ENDPOINT=""
 
+    unset GOROOT
+    unset GOPATH
+
     gopath_location="$HOME/projects/src/github.com/corpix/go-boilerplate"
 
     mkdir -p "$(dirname "$gopath_location")"
