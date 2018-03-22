@@ -4,22 +4,17 @@ script: |
     set -e
     set -x
 
+    gopath_location="$HOME/projects/src/github.com/corpix/go-boilerplate"
+    mkdir -p "$(dirname "$gopath_location")"
+    [ -e "$gopath_location" ] || ln -s $(pwd) "$gopath_location"
+    cd "$gopath_location"
+
     nixpkgs_rev=a682ba23d49cd13c92922af3d5dc44efd60ae9e7
-
     curl -L https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz | tar -xz -C $HOME
-
     export NIX_PATH=nixpkgs=$HOME/nixpkgs-${nixpkgs_rev}
-    export SENTRY=""
-    export WS_ENDPOINT=""
-    export HTTP_ENDPOINT=""
 
     unset GOROOT
     unset GOPATH
-
-    gopath_location="$HOME/projects/src/github.com/corpix/go-boilerplate"
-
-    mkdir -p "$(dirname "$gopath_location")"
-    [ -e "$gopath_location" ] || ln -s $(pwd) "$gopath_location"
 
     nix-shell --command "make test"
   '

@@ -6,10 +6,10 @@ version  := $(shell git rev-list --count HEAD).$(shell git rev-parse --short HEA
 name     := go-boilerplate
 package  := github.com/corpix/$(name)
 
-build    := ./build
-build_id := 0x$(shell echo $(version) | sha1sum | awk '{print $$1}')
-ldflags  := -X $(package)/cli.version=$(version) \
-            -B $(build_id)
+build       := ./build
+build_id    := 0x$(shell echo $(version) | sha1sum | awk '{print $$1}')
+ldflags     := -X $(package)/cli.version=$(version) -B $(build_id)
+build_flags := -a -ldflags "$(ldflags)" -o build/$(name)
 
 .PHONY: all
 all:: dependencies
@@ -24,14 +24,11 @@ clean::
 
 .PHONY: test
 test:: dependencies
-	go test -v \
-           $(shell glide novendor)
+	go test -v $(shell glide novendor)
 
 .PHONY: bench
 bench:: dependencies
-	go test        \
-           -bench=. -v \
-           $(shell glide novendor)
+	go test -bench=. -v $(shell glide novendor)
 
 .PHONY: lint
 lint:: dependencies
@@ -47,15 +44,9 @@ all:: $(name)
 $(name):: dependencies
 	mkdir -p $(build)
 	@echo "Build id: $(build_id)"
-	go build -a -ldflags "$(ldflags)" -v \
-                 -o build/$(name)            \
-                 $(package)/$(name)
+	go build $(build_flags) -v $(package)/$(name)
 
 .PHONY: build
 build:: $(name)
-
-.PHONY: clean
-clean::
-	rm -rf $(build)
 
 include config.mk
