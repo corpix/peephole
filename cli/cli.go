@@ -4,6 +4,8 @@ import (
 	"fmt"
 	builtinLogger "log"
 	"os"
+	"time"
+	"runtime/pprof"
 
 	"github.com/corpix/loggers"
 	"github.com/davecgh/go-spew/spew"
@@ -42,6 +44,13 @@ func Prerun(c *cli.Context) error {
 		spew.Dump(Config)
 	}
 
+	if c.Bool("profile") {
+		err = writeProfile()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -61,6 +70,23 @@ func Execute() {
 	if err != nil {
 		builtinLogger.Fatal(err)
 	}
+}
+
+func writeProfile() error {
+	f, err := os.Create("profile.prof")
+	if err != nil {
+		return err
+	}
+	pprof.StartCPUProfile(f)
+	go func() {
+		log.Print("Profiling, will exit in 30 seconds")
+		time.Sleep(30 * time.Second)
+		pprof.StopCPUProfile()
+		f.Close()
+		os.Exit(1)
+	}()
+
+	return nil
 }
 
 // initConfig reads in config file.

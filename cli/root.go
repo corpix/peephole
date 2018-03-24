@@ -22,6 +22,10 @@ var (
 			Name:  "debug",
 			Usage: "add this flag to enable debug mode",
 		},
+		cli.BoolFlag{
+			Name:  "profile",
+			Usage: "write profile information for debugging",
+		},
 	}
 )
 

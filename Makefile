@@ -18,10 +18,6 @@ all:: dependencies
 dependencies::
 	glide install
 
-.PHONY: clean
-clean::
-	git clean -xddff
-
 .PHONY: test
 test:: dependencies
 	go test -v $(shell glide novendor)
@@ -32,7 +28,7 @@ bench:: dependencies
 
 .PHONY: lint
 lint:: dependencies
-	go vet $(shell glide novendor)
+	go vet -v $(shell glide novendor)
 
 .PHONY: check
 check:: lint test
@@ -48,5 +44,9 @@ $(name):: dependencies
 
 .PHONY: build
 build:: $(name)
+
+.PHONY: clean
+clean::
+	git clean -xddff
 
 include config.mk
