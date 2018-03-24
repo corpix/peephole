@@ -12,6 +12,6 @@
         "PATH":     "$HOME/.local/bin:$HOME/projects/bin:$PATH",
         "NIX_PATH": "$NIX_PATH",
         "GOPATH":   "$HOME/projects",
-        "TERM":     "screen-256color"
+        "TERM":     "xterm-256color"
     }
 }
