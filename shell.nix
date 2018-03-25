@@ -4,8 +4,8 @@ stdenv.mkDerivation {
   buildInputs = [
     go
     gocode
-    glide
     godef
+    dep
   ];
   shellHook = ''
     export GOPATH=~/projects
