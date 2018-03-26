@@ -6,6 +6,7 @@ stdenv.mkDerivation {
     gocode
     godef
     dep
+    delve
   ];
   shellHook = ''
     export GOPATH=~/projects
