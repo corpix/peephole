@@ -4,8 +4,8 @@ import (
 	"fmt"
 	builtinLogger "log"
 	"os"
-	"time"
 	"runtime/pprof"
+	"time"
 
 	"github.com/corpix/loggers"
 	"github.com/davecgh/go-spew/spew"
@@ -73,16 +73,25 @@ func Execute() {
 }
 
 func writeProfile() error {
-	f, err := os.Create("profile.prof")
+	cpu, err := os.Create("cpu.prof")
 	if err != nil {
 		return err
 	}
-	pprof.StartCPUProfile(f)
+	heap, err := os.Create("heap.prof")
+	if err != nil {
+		return err
+	}
+
+	pprof.StartCPUProfile(cpu)
 	go func() {
+		defer cpu.Close()
+		defer heap.Close()
+
 		log.Print("Profiling, will exit in 30 seconds")
 		time.Sleep(30 * time.Second)
 		pprof.StopCPUProfile()
-		f.Close()
+		pprof.WriteHeapProfile(heap)
+
 		os.Exit(1)
 	}()
 
