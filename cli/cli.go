@@ -5,6 +5,7 @@ import (
 	builtinLogger "log"
 	"os"
 	"runtime/pprof"
+	"runtime/trace"
 	"time"
 
 	"github.com/corpix/loggers"
@@ -51,6 +52,13 @@ func Prerun(c *cli.Context) error {
 		}
 	}
 
+	if c.Bool("trace") {
+		err = writeTrace()
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -72,6 +80,7 @@ func Execute() {
 	}
 }
 
+// writeProfile writes cpu and heap profile into files.
 func writeProfile() error {
 	cpu, err := os.Create("cpu.prof")
 	if err != nil {
@@ -92,7 +101,28 @@ func writeProfile() error {
 		pprof.StopCPUProfile()
 		pprof.WriteHeapProfile(heap)
 
-		os.Exit(1)
+		os.Exit(0)
+	}()
+
+	return nil
+}
+
+// writeTrace writes tracing data to file.
+func writeTrace() error {
+	t, err := os.Create("trace.prof")
+	if err != nil {
+		return err
+	}
+
+	trace.Start(t)
+	go func() {
+		defer t.Close()
+
+		log.Print("Tracing, will exit in 30 seconds")
+		time.Sleep(30 * time.Second)
+		trace.Stop()
+
+		os.Exit(0)
 	}()
 
 	return nil

@@ -54,3 +54,4 @@ clean::
 	git clean -xddff
 
 include config.mk
+include debug.mk

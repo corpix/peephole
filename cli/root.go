@@ -24,7 +24,11 @@ var (
 		},
 		cli.BoolFlag{
 			Name:  "profile",
-			Usage: "write profile information for debugging",
+			Usage: "write profile information for debugging(cpu.prof, heap.prof)",
+		},
+		cli.BoolFlag{
+			Name:  "trace",
+			Usage: "write trace information for debugging(trace.prof)",
 		},
 	}
 )
