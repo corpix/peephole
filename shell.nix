@@ -7,8 +7,10 @@ stdenv.mkDerivation {
     godef
     dep
     delve
+    go-langserver
   ];
   shellHook = ''
-    export GOPATH=~/projects
+    export GOPATH=$HOME/projects
+    export GOROOT=${go}/share/go
   '';
 }
