@@ -4,10 +4,14 @@ stdenv.mkDerivation {
   buildInputs = [
     go
     gocode
-    glide
     godef
+    go2nix
+    dep
+    delve
+    go-langserver
   ];
   shellHook = ''
-    export GOPATH=~/projects
+    export GOPATH=$HOME/projects
+    export GOROOT=${go}/share/go
   '';
 }

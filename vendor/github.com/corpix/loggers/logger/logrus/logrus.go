@@ -19,8 +19,8 @@ const (
 // Config is a logrus configuration which could be
 // customized.
 type Config struct {
-	Level     string
-	Formatter string
+	Level     string `validate:"required" default:"info"`
+	Formatter string `validate:"required" default:"json"`
 }
 
 // Logrus is a logrus for logger that implements
@@ -32,9 +32,8 @@ type Logrus struct {
 // Write slice of bytes into the logger and return number of written
 // bytes and error value of present.
 func (l *Logrus) Write(buf []byte) (int, error) {
-	n := len(buf) + 1
-	l.Printf("%s\n", buf)
-	return n, nil
+	l.Printf("%s", buf)
+	return len(buf), nil
 }
 
 // Level returns a current logger level number.

@@ -6,17 +6,16 @@ import (
 	"os"
 
 	"github.com/corpix/formats"
+	"github.com/corpix/loggers/logger/logrus"
 	"github.com/creasty/defaults"
 	"github.com/go-playground/validator"
 	"github.com/imdario/mergo"
-
-	"github.com/corpix/go-boilerplate/logger"
 )
 
 var (
 	// Default represents default application config.
 	Default = Config{
-		Logger: logger.Config{
+		Logger: logrus.Config{
 			Level:     "info",
 			Formatter: "json",
 		},
@@ -25,7 +24,10 @@ var (
 
 // Config represents application configuration structure.
 type Config struct {
-	Logger logger.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"json\"}"`
+	Logger   logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"json\"}"`
+	Addr     string        `calidate:"required" default:"127.0.0.1:1080"`
+	Accounts map[string]string
+	Targets  []string
 }
 
 // FromReader returns parsed config data in some `f` from reader `r`.

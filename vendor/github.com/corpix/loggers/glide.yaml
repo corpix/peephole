@@ -1,8 +1,0 @@
-package: github.com/corpix/loggers
-import:
-- package: github.com/nsqio/go-nsq
-- package: github.com/sirupsen/logrus
-testImport:
-- package: github.com/stretchr/testify
-  subpackages:
-  - assert

@@ -1,14 +1,14 @@
 version: "2"
 services:
-  go-boilerplate:
-    image: go-boilerplate
+  peephole:
+    image: peephole
     build: .
     volumes:
-      - ./build/go-boilerplate:/usr/bin/go-boilerplate:ro
-      - ./config.json:/etc/go-boilerplate/config.json:ro
+      - ./build/peephole:/usr/bin/peephole:ro
+      - ./config.json:/etc/peephole/config.json:ro
     command: >-
-      /usr/bin/go-boilerplate
-      --config /etc/go-boilerplate/config.json
+      /usr/bin/peephole
+      --config /etc/peephole/config.json
       --debug
     ports: []
     links: []

@@ -14,6 +14,9 @@ const (
 
 	// TOML is a TOML format name.
 	TOML = "toml"
+
+	// HEX is a HEX format name.
+	HEX = "hex"
 )
 
 var (
@@ -24,6 +27,7 @@ var (
 		JSON,
 		YAML,
 		TOML,
+		HEX,
 	}
 
 	// synonyms represents a format name synonyms mapping
@@ -70,6 +74,8 @@ func New(name string) (Format, error) {
 		return NewYAML(), nil
 	case TOML:
 		return NewTOML(), nil
+	case HEX:
+		return NewHEX(), nil
 	default:
 		return nil, NewErrNotSupported(name)
 	}

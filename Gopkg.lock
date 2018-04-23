@@ -3,23 +3,55 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/corpix/formats"
+  name = "github.com/armon/go-socks5"
   packages = ["."]
-  revision = "ca6b86539565956b3b8019f8a5ad9e04db4ec946"
+  revision = "e75332964ef517daa070d7c38a9466a0d687e0a5"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/corpix/effects"
+  packages = ["writer"]
+  revision = "74e07942c634ed08990d7e93ec791f4a09777c32"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/corpix/formats"
+  packages = ["."]
+  revision = "82e0b4c50e18d80c385051d0cf735190f037bc23"
+
+[[projects]]
+  branch = "master"
   name = "github.com/corpix/loggers"
   packages = [
     ".",
-    "logger/logrus"
+    "logger/logrus",
+    "logger/prefixwrapper"
   ]
-  revision = "6428ebad5a5ef7a300d5dc269a99978de598aace"
+  revision = "3cba33c3680c0923016cd7d29f7d121f08fb4d68"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/corpix/pool"
+  packages = ["."]
+  revision = "d8dc1bf4576a4206a54bb8c3f1b14c47322b1f7b"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/corpix/reflect"
+  packages = ["."]
+  revision = "762e8fbf1f83a7e3e4ee34b7732a776b478ffc3f"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/corpix/time"
+  packages = ["."]
+  revision = "9adb218ff5319d3f3e3d5a44fe0cb5d4880762f4"
 
 [[projects]]
   name = "github.com/creasty/defaults"
   packages = ["."]
-  revision = "046b42c5f1223416864bdd984edb30d270cfce8a"
-  version = "v1.2.0"
+  revision = "a7e48e2230891fc7456c8ab918c424c5b06c3192"
+  version = "v1.2.1"
 
 [[projects]]
   branch = "master"
@@ -33,26 +65,26 @@
     ".",
     "currency"
   ]
-  revision = "e4cbcb5d0652150d40ad0646651076b6bd2be4f6"
-  version = "v0.11.2"
+  revision = "f63010822830b6fe52288ee52d5a1151088ce039"
+  version = "v0.12.1"
 
 [[projects]]
-  branch = "master"
   name = "github.com/go-playground/universal-translator"
   packages = ["."]
-  revision = "71201497bace774495daed26a3874fd339e0b538"
+  revision = "b32fa301c9fe55953584134cb6853a13c87ec0a1"
+  version = "v0.16.0"
 
 [[projects]]
   name = "github.com/go-playground/validator"
   packages = ["."]
-  revision = "8ce234ff024d85b3848e485decba806385d6e276"
-  version = "v9.13.0"
+  revision = "14984d91328f9612b58443cbdf4a077d4fd71091"
+  version = "v9.15.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/imdario/mergo"
   packages = ["."]
-  revision = "0d4b488675fdec1dde48751b05ab530cf0b630e1"
+  revision = "9d5f1277e9a8ed20c3684bda8fde67c05628518c"
+  version = "v0.3.4"
 
 [[projects]]
   name = "github.com/naoina/go-stringutil"
@@ -70,10 +102,10 @@
   revision = "9fafd69674167c06933b1787ae235618431ce87f"
 
 [[projects]]
-  branch = "master"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "90150a8ed11b6ce285e77e8af2b0109559ce4777"
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
 
 [[projects]]
   branch = "master"
@@ -82,27 +114,35 @@
   revision = "8e01ec4cd3e2d84ab2fe90d8210528ffbb06d8ff"
 
 [[projects]]
+  branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "80db560fac1fb3e6ac81dbc7f8ae4c061f5257bd"
+  revision = "2b6c08872f4b66da917bb4ce98df4f0307330f78"
 
 [[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["context"]
+  revision = "5f9ae10d9af5b1c89ae6904293b14b064d4ada23"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows"
   ]
-  revision = "c488ab1dd8481ef762f96a79a9577c27825be697"
+  revision = "79b0c6888797020a994db17c8510466c72fe75d9"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "7f97868eec74b32b0982dd158a51a446d1da7eb5"
-  version = "v2.1.1"
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9b91c3e9f9e957b9d00e472508ca01aa44ad0570040c267fa0e4405c0c1c1349"
+  inputs-digest = "6d1e27711d0c181ca8948a7dde65a3def6c3fa076f8ea3dc35368a0b7ce838f9"
   solver-name = "gps-cdcl"
   solver-version = 1

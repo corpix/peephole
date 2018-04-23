@@ -1,9 +1,12 @@
 {
     "build_id_generator": "0x$(shell echo $(version) | sha1sum | awk '{print $$1}')",
     "host": "github.com",
-    "include": ["config.mk", "debug.mk"],
+    "include": [
+        "config.mk",
+        "debug.mk"
+    ],
     "kind": "application",
-    "name": "go-boilerplate",
+    "name": "peephole",
     "tool": [],
     "user": "corpix",
     "version_generator": "$(shell git rev-list --count HEAD).$(shell git rev-parse --short HEAD)",

@@ -28,6 +28,15 @@ hello:
 
 $ echo '{"hello": ["world", {"of": "foo", "bar": true}]}' | formats --from json --to yaml | formats --from yaml --to json
 {"hello":["world",{"bar":"true","of":"foo"}]}
+
+$ echo -n 'hello' | formats --to hex
+68656c6c6f
+
+$ echo -n '68656c6c6f' | formats --from hex
+hello
+
+$ echo -n '68656c6c6f' | formats --from hex --to json
+"hello"
 ```
 
 ## Library usage example

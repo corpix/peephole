@@ -1,8 +1,24 @@
-language: go
+language: nix
+script: |
+  bash -c '
+    set -e
+    set -x
 
-go:
-  - 1.8
-  - 1.9
-  - master
+    gopath_location="$HOME/projects/src/github.com/corpix/formats"
+    mkdir -p "$(dirname "$gopath_location")"
+    [ -e "$gopath_location" ] || ln -s $(pwd) "$gopath_location"
+    cd "$gopath_location"
 
-script: make test
+    nixpkgs_rev=a682ba23d49cd13c92922af3d5dc44efd60ae9e7
+    curl -L https://github.com/NixOS/nixpkgs/archive/${nixpkgs_rev}.tar.gz | tar -xz -C $HOME
+    export NIX_PATH=nixpkgs=$HOME/nixpkgs-${nixpkgs_rev}
+
+    unset GOROOT
+    unset GOPATH
+
+    nix-shell --command "make test"
+  '
+
+cache:
+  directories:
+    - /nix

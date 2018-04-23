@@ -1,7 +1,7 @@
-go-boilerplate
+peephole
 ---------
 
-[![Build Status](https://travis-ci.org/corpix/go-boilerplate.svg?branch=master)](https://travis-ci.org/corpix/go-boilerplate)
+[![Build Status](https://travis-ci.org/corpix/peephole.svg?branch=master)](https://travis-ci.org/corpix/peephole)
 
 ## Bootstrap
 
@@ -46,23 +46,23 @@ If you plan to use some containerisation then you should have:
 
 > Or if you use nixos(or have bubblewrap+nix on linux) you could use [nix-cage](https://github.com/corpix/nix-cage)
 
-### Running go-boilerplate
+### Running peephole
 
 Build a binary release:
 
 ``` console
 $ GOOS=linux make
-# This will put a binary into ./build/go-boilerplate
+# This will put a binary into ./build/peephole
 ```
 
 #### Docker
 
 ``` console
-$ docker-compose up go-boilerplate
+$ docker-compose up peephole
 ```
 
 #### No isolation
 
 ``` console
-$ go run ./go-boilerplate/go-boilerplate.go --debug
+$ go run ./peephole/peephole.go --debug
 ```

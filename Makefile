@@ -3,8 +3,8 @@
 numcpus  := $(shell cat /proc/cpuinfo | grep '^processor\s*:' | wc -l)
 version  := $(shell git rev-list --count HEAD).$(shell git rev-parse --short HEAD)
 
-name     := go-boilerplate
-package  := github.com/corpix/$(name)
+name     := peephole
+package  := github.com/corpix/peephole
 
 # XXX: Fuck you golang!
 # 99% of time having vendor in a wildcard result is not what you want!

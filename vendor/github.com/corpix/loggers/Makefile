@@ -6,45 +6,32 @@ version  := $(shell git rev-list --count HEAD).$(shell git rev-parse --short HEA
 name     := loggers
 package  := github.com/corpix/$(name)
 
+# XXX: Fuck you golang!
+# 99% of time having vendor in a wildcard result is not what you want!
+packages := $(shell go list ./... | grep -v /vendor/)
+
 .PHONY: all
 all:: dependencies
 
-.PHONY: tools
-tools::
-	@if [ ! -e "$(GOPATH)"/bin/glide ]; then go get github.com/Masterminds/glide; fi
-	@if [ ! -e "$(GOPATH)"/bin/glide-cleanup ]; then go get github.com/ngdinhtoan/glide-cleanup; fi
-	@if [ ! -e "$(GOPATH)"/bin/glide-vc ]; then go get github.com/sgotti/glide-vc; fi
-	@if [ ! -e "$(GOPATH)"/bin/godef ]; then go get github.com/rogpeppe/godef; fi
-	@if [ ! -e "$(GOPATH)"/bin/gocode ]; then go get github.com/nsf/gocode; fi
-	@if [ ! -e "$(GOPATH)"/bin/gometalinter ]; then go get github.com/alecthomas/gometalinter && gometalinter --install; fi
-	@if [ ! -e "$(GOPATH)"/src/github.com/stretchr/testify/assert ]; then go get github.com/stretchr/testify/assert; fi
-
 .PHONY: dependencies
-dependencies:: tools
-	glide install
-
-.PHONY: clean
-clean:: tools
-	glide cache-clear
+dependencies::
+	dep ensure
 
 .PHONY: test
 test:: dependencies
-	go test -v \
-           $(shell glide novendor)
+	go test -v $(packages)
 
 .PHONY: bench
 bench:: dependencies
-	go test        \
-           -bench=. -v \
-           $(shell glide novendor)
+	go test -bench=. -v $(packages)
 
 .PHONY: lint
 lint:: dependencies
-	go vet $(shell glide novendor)
-	gometalinter                     \
-		--deadline=5m            \
-		--concurrency=$(numcpus) \
-		$(shell glide novendor)
+	go vet -v $(packages)
 
 .PHONY: check
 check:: lint test
+
+.PHONY: clean
+clean::
+	git clean -xddff
