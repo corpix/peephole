@@ -1,6 +1,6 @@
 test::
-	go run ./go-boilerplate/go-boilerplate.go --profile
+	go run ./peephole.go --profile
 	[ -e heap.prof ]
 	[ -e cpu.prof ]
-	go run ./go-boilerplate/go-boilerplate.go --trace
+	go run ./peephole.go --trace
 	[ -e trace.prof ]
