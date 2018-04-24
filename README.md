@@ -5,10 +5,18 @@ peephole
 
 Simple proxy server. Project is under development.
 
+## Get
+
+> You will need Go >=1.9
+``` console
+$ go get github.com/corpix/peephole
+$ cd $GOPATH/src/github.com/corpix/peephole
+```
+
 ## Run
 
 ``` console
-$ go run ./go-boilerplate/go-boilerplate.go --debug
+$ go run ./peephole/peephole.go --debug
 ```
 
 ### Docker
@@ -19,5 +27,5 @@ $ go run ./go-boilerplate/go-boilerplate.go --debug
 
 ``` console
 $ make
-$ docker-compose up go-boilerplate
+$ docker-compose up peephole
 ```
