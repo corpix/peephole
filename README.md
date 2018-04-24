@@ -3,27 +3,21 @@ peephole
 
 [![Build Status](https://travis-ci.org/corpix/peephole.svg?branch=master)](https://travis-ci.org/corpix/peephole)
 
-Simple proxy server.
+Simple proxy server. Project is under development.
 
-### Running peephole
-
-#### No isolation
+## Run
 
 ``` console
-$ go run ./peephole/peephole.go --debug
+$ go run ./go-boilerplate/go-boilerplate.go --debug
 ```
 
-#### Docker
+### Docker
+
+> If you use something other than Linux then
+> You should run `make` like this `make GOOS=linux`
+> Otherwise your container will not work
 
 ``` console
-$ docker-compose up peephole
+$ make
+$ docker-compose up go-boilerplate
 ```
-
-Build a binary release:
-
-``` console
-$ GOOS=linux make
-$ ./build/peephole
-```
-
-
