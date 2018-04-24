@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/caarlos0/env"
 	"github.com/corpix/formats"
 	"github.com/corpix/loggers/logger/logrus"
 	"github.com/creasty/defaults"
@@ -25,7 +26,7 @@ var (
 // Config represents application configuration structure.
 type Config struct {
 	Logger   logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"json\"}"`
-	Addr     string        `calidate:"required" default:"127.0.0.1:1080"`
+	Addr     string        `validate:"required" default:"127.0.0.1:1080" env:"ADDR"`
 	Accounts map[string]string
 	Targets  []string
 }
@@ -57,6 +58,11 @@ func FromReader(f formats.Format, r io.Reader) (Config, error) {
 	}
 
 	err = defaults.Set(&c)
+	if err != nil {
+		return c, err
+	}
+
+	err = env.Parse(&c)
 	if err != nil {
 		return c, err
 	}

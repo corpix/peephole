@@ -8,6 +8,12 @@
   revision = "e75332964ef517daa070d7c38a9466a0d687e0a5"
 
 [[projects]]
+  name = "github.com/caarlos0/env"
+  packages = ["."]
+  revision = "7cd7992b3bc86f920394f8de92c13900da1a46b7"
+  version = "v3.2.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/corpix/effects"
   packages = ["writer"]
@@ -143,6 +149,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6d1e27711d0c181ca8948a7dde65a3def6c3fa076f8ea3dc35368a0b7ce838f9"
+  inputs-digest = "364d4e2f33bc315208be6c6ee5276b7ddd195d37ea901026687bbac01f0409ca"
   solver-name = "gps-cdcl"
   solver-version = 1
