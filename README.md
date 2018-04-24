@@ -29,3 +29,11 @@ $ go run ./peephole/peephole.go --debug
 $ make
 $ docker-compose up peephole
 ```
+
+## Configuration
+
+### Env variables
+
+- `ADDR``
+- `CONFIG`
+- `DEBUG`
