@@ -41,7 +41,7 @@ check:: lint test
 all:: $(name)
 
 .PHONY: $(name)
-$(name):: dependencies
+$(name)::
 	mkdir -p $(build)
 	@echo "Build id: $(build_id)"
 	go build $(build_flags) -v $(package)/$(name)
