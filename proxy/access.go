@@ -3,9 +3,9 @@ package proxy
 import (
 	"context"
 
-	//metrics "github.com/armon/go-metrics"
-	socks "github.com/armon/go-socks5"
 	"github.com/corpix/loggers"
+
+	"github.com/corpix/peephole/socks"
 )
 
 type Access struct {

@@ -3,10 +3,10 @@ package cli
 import (
 	"time"
 
-	//metrics "github.com/armon/go-metrics"
-	socks "github.com/armon/go-socks5"
-	"github.com/corpix/peephole/proxy"
 	"github.com/urfave/cli"
+
+	"github.com/corpix/peephole/proxy"
+	"github.com/corpix/peephole/socks"
 )
 
 var (

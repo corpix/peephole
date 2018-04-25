@@ -5,11 +5,12 @@ import (
 	"log"
 	"net"
 
-	socks "github.com/armon/go-socks5"
 	"github.com/corpix/effects/writer"
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
+
 	"github.com/corpix/peephole/config"
+	"github.com/corpix/peephole/socks"
 )
 
 func NewConfig(c config.Config, l loggers.Logger) (*socks.Config, error) {

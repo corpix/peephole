@@ -2,12 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  name = "github.com/armon/go-socks5"
-  packages = ["."]
-  revision = "e75332964ef517daa070d7c38a9466a0d687e0a5"
-
-[[projects]]
   name = "github.com/caarlos0/env"
   packages = ["."]
   revision = "7cd7992b3bc86f920394f8de92c13900da1a46b7"
@@ -149,6 +143,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "364d4e2f33bc315208be6c6ee5276b7ddd195d37ea901026687bbac01f0409ca"
+  inputs-digest = "0f53c9e76b8ebf7f612d8187622fa801b5c582c7676f8a88271ca116b4090e44"
   solver-name = "gps-cdcl"
   solver-version = 1

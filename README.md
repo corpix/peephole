@@ -37,3 +37,7 @@ $ docker-compose up peephole
 - `ADDR``
 - `CONFIG`
 - `DEBUG`
+
+## Credits
+
+- Socks package is a fork of https://github.com/armon/go-socks5

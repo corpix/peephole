@@ -67,7 +67,7 @@ func Prerun(c *cli.Context) error {
 func Execute() {
 	app := cli.NewApp()
 	app.Name = "peephole"
-	app.Usage = "peephole-description"
+	app.Usage = "Simple proxy"
 	app.Action = RootAction
 	app.Flags = RootFlags
 	app.Commands = RootCommands

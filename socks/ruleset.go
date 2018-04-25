@@ -1,7 +1,7 @@
-package socks5
+package socks
 
 import (
-	"golang.org/x/net/context"
+	"context"
 )
 
 // RuleSet is used to provide custom rules to allow or prohibit actions
