@@ -1,13 +1,9 @@
 .DEFAULT_GOAL = all
 
-numcpus  := $(shell cat /proc/cpuinfo | grep '^processor\s*:' | wc -l)
 version  := $(shell git rev-list --count HEAD).$(shell git rev-parse --short HEAD)
 
 name     := peephole
-package  := github.com/corpix/peephole
-
-# XXX: Fuck you golang!
-# 99% of time having vendor in a wildcard result is not what you want!
+package  := github.com/corpix/$(name)
 packages := $(shell go list ./... | grep -v /vendor/)
 
 build       := ./build
@@ -17,21 +13,22 @@ build_flags := -a -ldflags "$(ldflags)" -o build/$(name)
 
 .PHONY: all
 all:: dependencies
+all:: build
 
 .PHONY: dependencies
 dependencies::
 	dep ensure
 
 .PHONY: test
-test:: dependencies
+test::
 	go test -v $(packages)
 
 .PHONY: bench
-bench:: dependencies
+bench::
 	go test -bench=. -v $(packages)
 
 .PHONY: lint
-lint:: dependencies
+lint::
 	go vet -v $(packages)
 
 .PHONY: check

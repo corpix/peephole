@@ -4,12 +4,22 @@ import (
 	"bytes"
 	"encoding/binary"
 	"io"
-	"log"
 	"net"
-	"os"
 	"testing"
 	"time"
+
+	"github.com/corpix/loggers"
+	"github.com/corpix/loggers/logger/logrus"
 )
+
+func logger(t *testing.T) loggers.Logger {
+	l, err := logrus.NewFromConfig(logrus.Config{Level: "info"})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return l
+}
 
 func TestSOCKS5_Connect(t *testing.T) {
 	// Create a local listener
@@ -41,11 +51,8 @@ func TestSOCKS5_Connect(t *testing.T) {
 		"foo": "bar",
 	}
 	cator := UserPassAuthenticator{Credentials: creds}
-	conf := &Config{
-		AuthMethods: []Authenticator{cator},
-		Logger:      log.New(os.Stdout, "", log.LstdFlags),
-	}
-	serv, err := New(conf)
+	conf := &Config{AuthMethods: []Authenticator{cator}}
+	serv, err := New(conf, logger(t))
 	if err != nil {
 		t.Fatalf("err: %v", err)
 	}

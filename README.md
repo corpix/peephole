@@ -34,7 +34,7 @@ $ docker-compose up peephole
 
 ### Env variables
 
-- `ADDR``
+- `ADDR`
 - `CONFIG`
 - `DEBUG`
 

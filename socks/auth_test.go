@@ -10,7 +10,14 @@ func TestNoAuth(t *testing.T) {
 	req.Write([]byte{1, NoAuth})
 	var resp bytes.Buffer
 
-	s, _ := New(&Config{})
+	s, err := New(
+		&Config{},
+		logger(t),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	ctx, err := s.authenticate(&resp, req)
 	if err != nil {
 		t.Fatalf("err: %v", err)
@@ -38,7 +45,13 @@ func TestPasswordAuth_Valid(t *testing.T) {
 
 	cator := UserPassAuthenticator{Credentials: cred}
 
-	s, _ := New(&Config{AuthMethods: []Authenticator{cator}})
+	s, err := New(
+		&Config{AuthMethods: []Authenticator{cator}},
+		logger(t),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ctx, err := s.authenticate(&resp, req)
 	if err != nil {
@@ -74,7 +87,13 @@ func TestPasswordAuth_Invalid(t *testing.T) {
 		"foo": "bar",
 	}
 	cator := UserPassAuthenticator{Credentials: cred}
-	s, _ := New(&Config{AuthMethods: []Authenticator{cator}})
+	s, err := New(
+		&Config{AuthMethods: []Authenticator{cator}},
+		logger(t),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ctx, err := s.authenticate(&resp, req)
 	if err != UserAuthFailed {
@@ -101,7 +120,13 @@ func TestNoSupportedAuth(t *testing.T) {
 	}
 	cator := UserPassAuthenticator{Credentials: cred}
 
-	s, _ := New(&Config{AuthMethods: []Authenticator{cator}})
+	s, err := New(
+		&Config{AuthMethods: []Authenticator{cator}},
+		logger(t),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	ctx, err := s.authenticate(&resp, req)
 	if err != NoSupportedAuth {
