@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"log"
 	"net"
-	"os"
+
+	"github.com/corpix/loggers"
+	"github.com/corpix/loggers/logger/prefixwrapper"
 )
 
 const (
@@ -41,10 +42,6 @@ type Config struct {
 	// BindIP is used for bind or udp associate
 	BindIP net.IP
 
-	// Logger can be used to provide a custom log target.
-	// Defaults to stdout.
-	Logger *log.Logger
-
 	// Optional function for dialing out
 	Dial func(ctx context.Context, network, addr string) (net.Conn, error)
 }
@@ -53,11 +50,12 @@ type Config struct {
 // the details of the SOCKS5 protocol
 type Server struct {
 	config      *Config
+	log         loggers.Logger
 	authMethods map[uint8]Authenticator
 }
 
 // New creates a new Server and potentially returns an error
-func New(conf *Config) (*Server, error) {
+func New(conf *Config, l loggers.Logger) (*Server, error) {
 	// Ensure we have at least one authentication method enabled
 	if len(conf.AuthMethods) == 0 {
 		if conf.Credentials != nil {
@@ -77,16 +75,11 @@ func New(conf *Config) (*Server, error) {
 		conf.Rules = PermitAll()
 	}
 
-	// Ensure we have a log target
-	if conf.Logger == nil {
-		conf.Logger = log.New(os.Stdout, "", log.LstdFlags)
-	}
-
 	server := &Server{
-		config: conf,
+		config:      conf,
+		log:         prefixwrapper.New("socks: ", l),
+		authMethods: make(map[uint8]Authenticator),
 	}
-
-	server.authMethods = make(map[uint8]Authenticator)
 
 	for _, a := range conf.AuthMethods {
 		server.authMethods[a.GetCode()] = a
@@ -124,14 +117,14 @@ func (s *Server) ServeConn(conn net.Conn) error {
 	// Read the version byte
 	version := []byte{0}
 	if _, err := bufConn.Read(version); err != nil {
-		s.config.Logger.Printf("[ERR] socks: Failed to get version byte: %v", err)
+		s.log.Errorf("Failed to get version byte: %v", err)
 		return err
 	}
 
 	// Ensure we are compatible
 	if version[0] != socks5Version {
 		err := fmt.Errorf("Unsupported SOCKS version: %v", version)
-		s.config.Logger.Printf("[ERR] socks: %v", err)
+		s.log.Error(err)
 		return err
 	}
 
@@ -139,7 +132,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 	authContext, err := s.authenticate(conn, bufConn)
 	if err != nil {
 		err = fmt.Errorf("Failed to authenticate: %v", err)
-		s.config.Logger.Printf("[ERR] socks: %v", err)
+		s.log.Error(err)
 		return err
 	}
 
@@ -160,7 +153,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 	// Process the client request
 	if err := s.handleRequest(request, conn); err != nil {
 		err = fmt.Errorf("Failed to handle request: %v", err)
-		s.config.Logger.Printf("[ERR] socks: %v", err)
+		s.log.Error(err)
 		return err
 	}
 

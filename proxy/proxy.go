@@ -2,10 +2,8 @@ package proxy
 
 import (
 	"errors"
-	"log"
 	"net"
 
-	"github.com/corpix/effects/writer"
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
 
@@ -16,14 +14,7 @@ import (
 func NewConfig(c config.Config, l loggers.Logger) (*socks.Config, error) {
 	var (
 		targets = make([]IPNet, len(c.Targets))
-		cfg     = socks.Config{
-			Logger: log.New(
-				writer.NewTrimSuffixWriter(l, []byte{'\n'}),
-				"",
-				0,
-			),
-			Resolver: socks.DNSResolver{},
-		}
+		cfg     = socks.Config{}
 
 		ipNet IPNet
 		err   error

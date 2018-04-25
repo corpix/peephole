@@ -44,7 +44,7 @@ func RootAction(c *cli.Context) error {
 		log.Fatal(err)
 	}
 
-	server, err := socks.New(cfg)
+	server, err := socks.New(cfg, log)
 	if err != nil {
 		log.Fatal(err)
 	}
