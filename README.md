@@ -5,6 +5,14 @@ peephole
 
 Simple proxy server. Project is under development.
 
+What should be done before release:
+
+- [ ] Configuration reload with `SIGHUP`
+- [ ] Statsd metrics
+- [ ] Loadtest
+- [ ] Docker container
+- [ ] Readme in russian
+
 ## Get
 
 > You will need Go >=1.9
