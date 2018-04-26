@@ -46,16 +46,11 @@ func TestSOCKS5_Connect(t *testing.T) {
 	}()
 	lAddr := l.Addr().(*net.TCPAddr)
 
-	// Create a socks server
-	creds := StaticCredentials{
-		"foo": "bar",
-	}
-	cator := UserPassAuthenticator{Credentials: creds}
-	conf := &Config{AuthMethods: []Authenticator{cator}}
-	serv, err := New(conf, logger(t))
-	if err != nil {
-		t.Fatalf("err: %v", err)
-	}
+	creds := StaticCredentials{"foo": "bar"}
+
+	p := NewParams(logger(t))
+	p.Authenticators = []Authenticator{UserPassAuthenticator{Credentials: creds}}
+	serv := New(p)
 
 	// Start listening
 	go func() {

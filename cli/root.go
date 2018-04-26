@@ -39,15 +39,12 @@ var (
 
 // RootAction is executing when program called without any subcommand.
 func RootAction(c *cli.Context) error {
-	cfg, err := proxy.NewConfig(Config, log)
+	p, err := proxy.NewParams(Config, log)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	server, err := socks.New(cfg, log)
-	if err != nil {
-		log.Fatal(err)
-	}
+	server := socks.New(p)
 
 	for {
 		err = server.ListenAndServe("tcp", Config.Addr)

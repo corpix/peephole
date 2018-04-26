@@ -1,8 +1,10 @@
 {
-  Logger = {
-    Level = "info";
-    Formatter = "json";
-  };
+  # Example configuration to proxy telegram messenger traffic.
+  # It will allow an authenticated user with login "jarov" and
+  # password "g0t0gulag"(all coincidences with reality are accidental)
+  # to connect to hosts which was specified in Targets.
+
+  #Logger.Formatter = "json";
 
   Addr = "127.0.0.1:1338";
 
@@ -11,7 +13,7 @@
   };
 
   Targets = [
-    # ipv4
+    # telegram ipv4
     "91.108.4.0/22"
     "91.108.8.0/22"
     "91.108.12.0/22"
@@ -26,15 +28,7 @@
     "149.154.168.0/23"
     "149.154.170.0/23"
 
-    # from logs
-    "88.99.136.234/32"
-    "35.177.17.109/32"
-    "52.58.53.237/32"
-    "88.99.136.233/32"
-    "45.43.186.233/32"
-    "51.141.85.155/32"
-
-    # ipv6
+    # telegram ipv6
     "2001:67c:4e8::/48"
     "2001:b28:f23d::/48"
     "2001:b28:f23e::/48"

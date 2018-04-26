@@ -9,12 +9,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/corpix/effects"
-  packages = ["writer"]
-  revision = "74e07942c634ed08990d7e93ec791f4a09777c32"
-
-[[projects]]
-  branch = "master"
   name = "github.com/corpix/formats"
   packages = ["."]
   revision = "82e0b4c50e18d80c385051d0cf735190f037bc23"
@@ -31,21 +25,9 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/corpix/pool"
-  packages = ["."]
-  revision = "d8dc1bf4576a4206a54bb8c3f1b14c47322b1f7b"
-
-[[projects]]
-  branch = "master"
   name = "github.com/corpix/reflect"
   packages = ["."]
   revision = "762e8fbf1f83a7e3e4ee34b7732a776b478ffc3f"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/corpix/time"
-  packages = ["."]
-  revision = "9adb218ff5319d3f3e3d5a44fe0cb5d4880762f4"
 
 [[projects]]
   name = "github.com/creasty/defaults"
@@ -117,7 +99,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "2b6c08872f4b66da917bb4ce98df4f0307330f78"
+  revision = "b0697eccbea9adec5b7ba8008f4c33d98d733388"
 
 [[projects]]
   branch = "master"
@@ -132,7 +114,7 @@
     "unix",
     "windows"
   ]
-  revision = "79b0c6888797020a994db17c8510466c72fe75d9"
+  revision = "bb9c189858d91f42db229b04d45a4c3d23a7662a"
 
 [[projects]]
   name = "gopkg.in/yaml.v2"
@@ -143,6 +125,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0f53c9e76b8ebf7f612d8187622fa801b5c582c7676f8a88271ca116b4090e44"
+  inputs-digest = "76b8eb9b3d7ef1728ffaf3ba935cacf9850cc3e87ac3ebc4b6629a4fbceca2b1"
   solver-name = "gps-cdcl"
   solver-version = 1

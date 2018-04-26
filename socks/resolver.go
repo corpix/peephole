@@ -5,12 +5,12 @@ import (
 	"net"
 )
 
-// NameResolver is used to implement custom name resolution
-type NameResolver interface {
+// Resolver is used to implement custom name resolution logic.
+type Resolver interface {
 	Resolve(ctx context.Context, name string) (context.Context, net.IP, error)
 }
 
-// DNSResolver uses the system DNS to resolve host names
+// DNSResolver uses the system DNS to resolve host names.
 type DNSResolver struct{}
 
 func (d DNSResolver) Resolve(ctx context.Context, name string) (context.Context, net.IP, error) {

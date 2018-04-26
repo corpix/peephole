@@ -4,22 +4,22 @@ import (
 	"context"
 )
 
-// RuleSet is used to provide custom rules to allow or prohibit actions
-type RuleSet interface {
-	Allow(ctx context.Context, req *Request) (context.Context, bool)
+// Rule is used to provide custom rules to allow or prohibit actions
+type Rule interface {
+	Match(ctx context.Context, req *Request) (context.Context, bool)
 }
 
-// PermitAll returns a RuleSet which allows all types of connections
-func PermitAll() RuleSet {
+// PermitAll returns a Rule which allows all types of connections
+func PermitAll() Rule {
 	return &PermitCommand{true, true, true}
 }
 
-// PermitNone returns a RuleSet which disallows all types of connections
-func PermitNone() RuleSet {
+// PermitNone returns a Rule which disallows all types of connections
+func PermitNone() Rule {
 	return &PermitCommand{false, false, false}
 }
 
-// PermitCommand is an implementation of the RuleSet which
+// PermitCommand is an implementation of the Rule which
 // enables filtering supported commands
 type PermitCommand struct {
 	EnableConnect   bool
@@ -27,7 +27,7 @@ type PermitCommand struct {
 	EnableAssociate bool
 }
 
-func (p *PermitCommand) Allow(ctx context.Context, req *Request) (context.Context, bool) {
+func (p *PermitCommand) Match(ctx context.Context, req *Request) (context.Context, bool) {
 	switch req.Command {
 	case ConnectCommand:
 		return ctx, p.EnableConnect

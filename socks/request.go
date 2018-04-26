@@ -35,8 +35,8 @@ var (
 	unrecognizedAddrType = fmt.Errorf("Unrecognized address type")
 )
 
-// AddressRewriter is used to rewrite a destination transparently
-type AddressRewriter interface {
+// Rewriter is used to rewrite a destination transparently
+type Rewriter interface {
 	Rewrite(ctx context.Context, request *Request) (context.Context, *AddrSpec)
 }
 
@@ -116,13 +116,13 @@ func NewRequest(bufConn io.Reader) (*Request, error) {
 }
 
 // handleRequest is used for request processing after authentication
-func (s *Server) handleRequest(req *Request, conn conn) error {
+func (s *Server) handleRequest(conn conn, req *Request) error {
 	ctx := context.Background()
 
 	// Resolve the address if we have a FQDN
 	dest := req.DestAddr
 	if dest.FQDN != "" {
-		ctx_, addr, err := s.config.Resolver.Resolve(ctx, dest.FQDN)
+		ctx_, addr, err := s.Params.Resolver.Resolve(ctx, dest.FQDN)
 		if err != nil {
 			if err := sendReply(conn, hostUnreachable, nil); err != nil {
 				return fmt.Errorf("Failed to send reply: %v", err)
@@ -135,8 +135,8 @@ func (s *Server) handleRequest(req *Request, conn conn) error {
 
 	// Apply any address rewrites
 	req.realDestAddr = req.DestAddr
-	if s.config.Rewriter != nil {
-		ctx, req.realDestAddr = s.config.Rewriter.Rewrite(ctx, req)
+	if s.Params.Rewriter != nil {
+		ctx, req.realDestAddr = s.Params.Rewriter.Rewrite(ctx, req)
 	}
 
 	// Switch on the command
@@ -158,23 +158,16 @@ func (s *Server) handleRequest(req *Request, conn conn) error {
 // handleConnect is used to handle a connect command
 func (s *Server) handleConnect(ctx context.Context, conn conn, req *Request) error {
 	// Check if this is allowed
-	if ctx_, ok := s.config.Rules.Allow(ctx, req); !ok {
+	if newCtx, ok := s.Params.Rule.Match(ctx, req); !ok {
 		if err := sendReply(conn, ruleFailure, nil); err != nil {
 			return fmt.Errorf("Failed to send reply: %v", err)
 		}
 		return fmt.Errorf("Connect to %v blocked by rules", req.DestAddr)
 	} else {
-		ctx = ctx_
+		ctx = newCtx
 	}
 
-	// Attempt to connect
-	dial := s.config.Dial
-	if dial == nil {
-		dial = func(ctx context.Context, net_, addr string) (net.Conn, error) {
-			return net.Dial(net_, addr)
-		}
-	}
-	target, err := dial(ctx, "tcp", req.realDestAddr.Address())
+	target, err := s.Params.Dial(ctx, "tcp", req.realDestAddr.Address())
 	if err != nil {
 		msg := err.Error()
 		resp := hostUnreachable
@@ -216,13 +209,13 @@ func (s *Server) handleConnect(ctx context.Context, conn conn, req *Request) err
 // handleBind is used to handle a connect command
 func (s *Server) handleBind(ctx context.Context, conn conn, req *Request) error {
 	// Check if this is allowed
-	if ctx_, ok := s.config.Rules.Allow(ctx, req); !ok {
+	if newCtx, ok := s.Params.Rule.Match(ctx, req); !ok {
 		if err := sendReply(conn, ruleFailure, nil); err != nil {
 			return fmt.Errorf("Failed to send reply: %v", err)
 		}
 		return fmt.Errorf("Bind to %v blocked by rules", req.DestAddr)
 	} else {
-		ctx = ctx_
+		ctx = newCtx
 	}
 
 	// TODO: Support bind
@@ -235,13 +228,13 @@ func (s *Server) handleBind(ctx context.Context, conn conn, req *Request) error 
 // handleAssociate is used to handle a connect command
 func (s *Server) handleAssociate(ctx context.Context, conn conn, req *Request) error {
 	// Check if this is allowed
-	if ctx_, ok := s.config.Rules.Allow(ctx, req); !ok {
+	if newCtx, ok := s.Params.Rule.Match(ctx, req); !ok {
 		if err := sendReply(conn, ruleFailure, nil); err != nil {
 			return fmt.Errorf("Failed to send reply: %v", err)
 		}
 		return fmt.Errorf("Associate to %v blocked by rules", req.DestAddr)
 	} else {
-		ctx = ctx_
+		ctx = newCtx
 	}
 
 	// TODO: Support associate
@@ -306,9 +299,12 @@ func readAddrSpec(r io.Reader) (*AddrSpec, error) {
 // sendReply is used to send a reply message
 func sendReply(w io.Writer, resp uint8, addr *AddrSpec) error {
 	// Format the address
-	var addrType uint8
-	var addrBody []byte
-	var addrPort uint16
+	var (
+		addrType uint8
+		addrBody []byte
+		addrPort uint16
+	)
+
 	switch {
 	case addr == nil:
 		addrType = ipv4Address

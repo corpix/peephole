@@ -15,17 +15,12 @@ import (
 
 var (
 	// Default represents default application config.
-	Default = Config{
-		Logger: logrus.Config{
-			Level:     "info",
-			Formatter: "json",
-		},
-	}
+	Default = Config{}
 )
 
 // Config represents application configuration structure.
 type Config struct {
-	Logger   logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"json\"}"`
+	Logger   logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"text\"}"`
 	Addr     string        `validate:"required" default:"127.0.0.1:1080" env:"ADDR"`
 	Accounts map[string]string
 	Targets  []string

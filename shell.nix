@@ -8,9 +8,17 @@ stdenv.mkDerivation {
     dep
     delve
     go-langserver
+    nodePackages.tern
   ];
   shellHook = ''
-    export GOPATH=$HOME/projects
+    # To fix shitty golang tooling
+    # Not all tools work good with vendor
+    [ -d $(pwd)/.vendor ] || {
+      mkdir -p $(pwd)/.vendor
+      ln    -s $(pwd)/vendor  $(pwd)/.vendor/src
+    }
+
+    export GOPATH=$HOME/projects:$HOME/vendor
     export GOROOT=${go}/share/go
   '';
 }

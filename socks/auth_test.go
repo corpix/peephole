@@ -8,16 +8,10 @@ import (
 func TestNoAuth(t *testing.T) {
 	req := bytes.NewBuffer(nil)
 	req.Write([]byte{1, NoAuth})
+
+	s := New(NewParams(logger(t)))
+
 	var resp bytes.Buffer
-
-	s, err := New(
-		&Config{},
-		logger(t),
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	ctx, err := s.authenticate(&resp, req)
 	if err != nil {
 		t.Fatalf("err: %v", err)
@@ -37,22 +31,15 @@ func TestPasswordAuth_Valid(t *testing.T) {
 	req := bytes.NewBuffer(nil)
 	req.Write([]byte{2, NoAuth, UserPassAuth})
 	req.Write([]byte{1, 3, 'f', 'o', 'o', 3, 'b', 'a', 'r'})
+
+	cred := StaticCredentials{"foo": "bar"}
+
+	p := NewParams(logger(t))
+	p.Authenticators = []Authenticator{UserPassAuthenticator{Credentials: cred}}
+
+	s := New(p)
+
 	var resp bytes.Buffer
-
-	cred := StaticCredentials{
-		"foo": "bar",
-	}
-
-	cator := UserPassAuthenticator{Credentials: cred}
-
-	s, err := New(
-		&Config{AuthMethods: []Authenticator{cator}},
-		logger(t),
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	ctx, err := s.authenticate(&resp, req)
 	if err != nil {
 		t.Fatalf("err: %v", err)
@@ -81,20 +68,14 @@ func TestPasswordAuth_Invalid(t *testing.T) {
 	req := bytes.NewBuffer(nil)
 	req.Write([]byte{2, NoAuth, UserPassAuth})
 	req.Write([]byte{1, 3, 'f', 'o', 'o', 3, 'b', 'a', 'z'})
+
+	cred := StaticCredentials{"foo": "bar"}
+	p := NewParams(logger(t))
+	p.Authenticators = []Authenticator{UserPassAuthenticator{Credentials: cred}}
+
+	s := New(p)
+
 	var resp bytes.Buffer
-
-	cred := StaticCredentials{
-		"foo": "bar",
-	}
-	cator := UserPassAuthenticator{Credentials: cred}
-	s, err := New(
-		&Config{AuthMethods: []Authenticator{cator}},
-		logger(t),
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	ctx, err := s.authenticate(&resp, req)
 	if err != UserAuthFailed {
 		t.Fatalf("err: %v", err)
@@ -113,21 +94,14 @@ func TestPasswordAuth_Invalid(t *testing.T) {
 func TestNoSupportedAuth(t *testing.T) {
 	req := bytes.NewBuffer(nil)
 	req.Write([]byte{1, NoAuth})
+
+	cred := StaticCredentials{"foo": "bar"}
+	p := NewParams(logger(t))
+	p.Authenticators = []Authenticator{UserPassAuthenticator{Credentials: cred}}
+
+	s := New(p)
+
 	var resp bytes.Buffer
-
-	cred := StaticCredentials{
-		"foo": "bar",
-	}
-	cator := UserPassAuthenticator{Credentials: cred}
-
-	s, err := New(
-		&Config{AuthMethods: []Authenticator{cator}},
-		logger(t),
-	)
-	if err != nil {
-		t.Fatal(err)
-	}
-
 	ctx, err := s.authenticate(&resp, req)
 	if err != NoSupportedAuth {
 		t.Fatalf("err: %v", err)

@@ -11,28 +11,27 @@ import (
 	"github.com/corpix/peephole/socks"
 )
 
-func NewConfig(c config.Config, l loggers.Logger) (*socks.Config, error) {
+func NewParams(c config.Config, l loggers.Logger) (socks.Params, error) {
 	var (
 		targets = make([]IPNet, len(c.Targets))
-		cfg     = socks.Config{}
+		p       = socks.NewParams(l)
 
 		ipNet IPNet
 		err   error
 	)
 
 	if len(c.Accounts) == 0 && len(c.Targets) == 0 {
-		return nil, errors.New("Neither Accounts or Targets was specified")
+		// FIXME: error type
+		return p, errors.New("Neither Accounts or Targets was specified")
 	}
 
 	if len(c.Accounts) > 0 {
 		l.Printf(
-			"Will use authentication, has %d accounts",
+			"Will use authentication, have %d accounts",
 			len(c.Accounts),
 		)
-		cfg.AuthMethods = []socks.Authenticator{
-			socks.UserPassAuthenticator{
-				Credentials: socks.StaticCredentials(c.Accounts),
-			},
+		p.Authenticators = []socks.Authenticator{
+			socks.UserPassAuthenticator{Credentials: socks.StaticCredentials(c.Accounts)},
 		}
 	} else {
 		l.Print("Will NOT use authentication, has no accounts")
@@ -44,23 +43,23 @@ func NewConfig(c config.Config, l loggers.Logger) (*socks.Config, error) {
 
 			ipNet.IP, ipNet.Net, err = net.ParseCIDR(v)
 			if err != nil {
-				l.Fatal(err)
+				return p, err
 			}
 			targets[k] = ipNet
 		}
 
 		l.Printf(
-			"Will use endpoint whitelists, has %d targets",
+			"Will use endpoint whitelists, have %d targets",
 			len(c.Targets),
 		)
 	} else {
 		l.Print("Will NOT use endpoint whitelists, has no targets")
 	}
 
-	cfg.Rules = &Access{
-		log:     prefixwrapper.New("Proxy Access: ", l),
+	p.Rule = &Access{
 		targets: targets,
+		log:     prefixwrapper.New("Access: ", l),
 	}
 
-	return &cfg, nil
+	return p, nil
 }
