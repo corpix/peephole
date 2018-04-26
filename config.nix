@@ -8,11 +8,9 @@
 
   Addr = "127.0.0.1:1338";
 
-  Accounts = {
-    "jarov" = "g0t0gulag";
-  };
+  #Accounts = { "jarov" = "g0t0gulag"; };
 
-  Targets = [
+  Addresses = [
     # telegram ipv4
     "91.108.4.0/22"
     "91.108.8.0/22"
@@ -33,5 +31,10 @@
     "2001:b28:f23d::/48"
     "2001:b28:f23e::/48"
     "2001:b28:f23f::/48"
+  ];
+
+  Domains = [
+    "^(.*\.)?t\.me$"
+    "^(.*\.)?telegram\.org$"
   ];
 }

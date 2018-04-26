@@ -20,10 +20,11 @@ var (
 
 // Config represents application configuration structure.
 type Config struct {
-	Logger   logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"text\"}"`
-	Addr     string        `validate:"required" default:"127.0.0.1:1080" env:"ADDR"`
-	Accounts map[string]string
-	Targets  []string
+	Logger    logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"text\"}"`
+	Addr      string        `validate:"required" default:"127.0.0.1:1080" env:"ADDR"`
+	Accounts  map[string]string
+	Addresses []string
+	Domains   []string
 }
 
 // FromReader returns parsed config data in some `f` from reader `r`.
