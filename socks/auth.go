@@ -111,33 +111,40 @@ func (a UserPassAuthenticator) Authenticate(reader io.Reader, writer io.Writer) 
 
 // authenticate is used to handle connection authentication
 func (s *Server) authenticate(conn io.Writer, bufConn io.Reader) (*AuthContext, error) {
-	// Get the methods
 	methods, err := readMethods(bufConn)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to get auth methods: %v", err)
+		return nil, NewErrReadingAuthMethods(err)
 	}
 
-	// Select a usable method
+	var (
+		authMethods = make([]Authenticator, len(methods))
+		n           int
+	)
+
 	for _, method := range methods {
-		cator, found := s.authMethods[method]
+		authMethod, found := s.authMethods[method]
 		if found {
-			return cator.Authenticate(bufConn, conn)
+			authMethods[n] = authMethod
+			n++
 		}
 	}
 
-	// No usable method found
-	return nil, noAcceptableAuth(conn)
-}
+	authMethods = authMethods[:n]
 
-// noAcceptableAuth is used to handle when we have no eligible
-// authentication mechanism
-func noAcceptableAuth(conn io.Writer) error {
+	for _, authMethod := range authMethods {
+		ctx, err := authMethod.Authenticate(bufConn, conn)
+		if err != nil {
+			return nil, err
+		}
+		return ctx, nil
+	}
+
 	conn.Write([]byte{socks5Version, noAcceptable})
-	return NoSupportedAuth
+	return nil, NewErrNoSupportedAuthMethod(authMethods)
 }
 
 // readMethods is used to read the number of methods
-// and proceeding auth methods
+// and proceeding auth methods.
 func readMethods(r io.Reader) ([]byte, error) {
 	header := []byte{0}
 	if _, err := r.Read(header); err != nil {

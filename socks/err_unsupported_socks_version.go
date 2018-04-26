@@ -10,7 +10,11 @@ type ErrUnsupportedSocksVersion struct {
 }
 
 func (e ErrUnsupportedSocksVersion) Error() string {
-	return fmt.Sprintf("Unsupported SOCKS version, want %d, got %d", e.Want, e.Got)
+	return fmt.Sprintf(
+		"Unsupported SOCKS version requested, want %d, got %d",
+		e.Want,
+		e.Got,
+	)
 }
 
 func NewErrUnsupportedSocksVersion(want, got uint8) ErrUnsupportedSocksVersion {

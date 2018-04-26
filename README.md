@@ -21,8 +21,8 @@ $ go run ./peephole/peephole.go --debug
 
 ### Docker
 
-> If you use something other than Linux then
-> You should run `make` like this `make GOOS=linux`
+> If you use something other than Linux then       <br/>
+> You should run `make` like this `make GOOS=linux <br/>`
 > Otherwise your container will not work
 
 ``` console

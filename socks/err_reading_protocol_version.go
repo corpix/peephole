@@ -9,7 +9,10 @@ type ErrReadingProtocolVersion struct {
 }
 
 func (e ErrReadingProtocolVersion) Error() string {
-	return fmt.Sprintf("Failed to read protocol version: %s", e.Err)
+	return fmt.Sprintf(
+		"Failed to read protocol version: %s",
+		e.Err,
+	)
 }
 
 func NewErrReadingProtocolVersion(err error) ErrReadingProtocolVersion {

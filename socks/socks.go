@@ -60,6 +60,8 @@ func (s *Server) Serve(l net.Listener) error {
 		if err != nil {
 			return err
 		}
+
+		// FIXME: Pool
 		go s.serveConnection(conn)
 	}
 
@@ -72,8 +74,8 @@ func (s *Server) serveConnection(conn net.Conn) {
 		if r := recover(); r != nil {
 			s.log.Error(
 				NewErrServingConnection(
-					fmt.Errorf("%s", r),
 					conn,
+					fmt.Errorf("%s", r),
 				),
 			)
 		}
@@ -81,7 +83,7 @@ func (s *Server) serveConnection(conn net.Conn) {
 
 	err := s.ServeConnection(conn)
 	if err != nil {
-		s.log.Error(NewErrServingConnection(err, conn))
+		s.log.Error(NewErrServingConnection(conn, err))
 	}
 }
 
@@ -111,10 +113,10 @@ func (s *Server) ServeConnection(conn net.Conn) error {
 	if err != nil {
 		if err == unrecognizedAddrType {
 			if err := sendReply(conn, addrTypeNotSupported, nil); err != nil {
-				return err
+				return NewErrReplyFailed(err)
 			}
 		}
-		return err
+		return NewErrRequestFailed(err)
 	}
 
 	request.AuthContext = authContext
@@ -132,7 +134,7 @@ func (s *Server) ServeConnection(conn net.Conn) error {
 
 	err = s.handleRequest(conn, request)
 	if err != nil {
-		return err
+		return NewErrRequestHandlerFailed(err)
 	}
 
 	return nil

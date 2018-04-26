@@ -6,18 +6,18 @@ import (
 )
 
 type ErrServingConnection struct {
-	Err  error
 	Conn net.Conn
+	Err  error
 }
 
 func (e ErrServingConnection) Error() string {
 	return fmt.Sprintf(
-		"Error while serving connection: Remote addr '%s': %s",
+		"Error while serving connection '%s': %s",
 		e.Conn.RemoteAddr(),
 		e.Err,
 	)
 }
 
-func NewErrServingConnection(err error, conn net.Conn) ErrServingConnection {
-	return ErrServingConnection{err, conn}
+func NewErrServingConnection(conn net.Conn, err error) ErrServingConnection {
+	return ErrServingConnection{conn, err}
 }

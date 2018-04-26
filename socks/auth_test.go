@@ -103,8 +103,10 @@ func TestNoSupportedAuth(t *testing.T) {
 
 	var resp bytes.Buffer
 	ctx, err := s.authenticate(&resp, req)
-	if err != NoSupportedAuth {
-		t.Fatalf("err: %v", err)
+	switch err.(type) {
+	case ErrNoSupportedAuthMethod:
+	default:
+		t.Fatal(err)
 	}
 
 	if ctx != nil {
