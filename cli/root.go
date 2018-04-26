@@ -39,7 +39,7 @@ var (
 
 // RootAction is executing when program called without any subcommand.
 func RootAction(c *cli.Context) error {
-	p, err := proxy.NewParams(Config, log)
+	p, err := proxy.NewParams(Config.Proxy, log)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -8,25 +8,19 @@ import (
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
 
-	"github.com/corpix/peephole/config"
 	"github.com/corpix/peephole/socks"
 )
 
-func NewParams(c config.Config, l loggers.Logger) (socks.Params, error) {
+func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 	var (
-		addresses = make([]IPNet, len(c.Addresses))
-		domains   = make([]*regexp.Regexp, len(c.Domains))
+		addresses = make([]IPNet, len(c.Whitelist.Addresses))
+		domains   = make([]*regexp.Regexp, len(c.Whitelist.Domains))
 		p         = socks.NewParams(l)
 
 		ipNet IPNet
 		r     *regexp.Regexp
 		err   error
 	)
-
-	if len(c.Accounts) == 0 && len(c.Addresses) == 0 {
-		// FIXME: error type
-		return p, errors.New("Neither Accounts or Addresses was specified")
-	}
 
 	if len(c.Accounts) > 0 {
 		l.Printf(
@@ -40,8 +34,8 @@ func NewParams(c config.Config, l loggers.Logger) (socks.Params, error) {
 		l.Print("Will NOT use authentication, has no accounts")
 	}
 
-	if len(c.Addresses) > 0 {
-		for k, v := range c.Addresses {
+	if len(c.Whitelist.Addresses) > 0 {
+		for k, v := range c.Whitelist.Addresses {
 			ipNet = IPNet{}
 
 			ipNet.IP, ipNet.Net, err = net.ParseCIDR(v)
@@ -53,14 +47,14 @@ func NewParams(c config.Config, l loggers.Logger) (socks.Params, error) {
 
 		l.Printf(
 			"Will use addresses whitelists, have %d addresses",
-			len(c.Addresses),
+			len(c.Whitelist.Addresses),
 		)
 	} else {
 		l.Print("Will NOT use addresses whitelists, has no addresses")
 	}
 
-	if len(c.Domains) > 0 {
-		for k, v := range c.Domains {
+	if len(c.Whitelist.Domains) > 0 {
+		for k, v := range c.Whitelist.Domains {
 			r, err = regexp.Compile(v)
 			if err != nil {
 				return p, err
@@ -71,7 +65,7 @@ func NewParams(c config.Config, l loggers.Logger) (socks.Params, error) {
 
 		l.Printf(
 			"Will use domain whitelists, have %d domains",
-			len(c.Domains),
+			len(c.Whitelist.Domains),
 		)
 	} else {
 		l.Print("Will NOT use domain whitelists, has no domains")

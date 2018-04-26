@@ -11,6 +11,8 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/go-playground/validator"
 	"github.com/imdario/mergo"
+
+	"github.com/corpix/peephole/proxy"
 )
 
 var (
@@ -20,11 +22,9 @@ var (
 
 // Config represents application configuration structure.
 type Config struct {
-	Logger    logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"text\"}"`
-	Addr      string        `validate:"required" default:"127.0.0.1:1080" env:"ADDR"`
-	Accounts  map[string]string
-	Addresses []string
-	Domains   []string
+	Logger logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"text\"}"`
+	Addr   string        `validate:"required" default:"127.0.0.1:1080" env:"ADDR"`
+	Proxy  proxy.Config
 }
 
 // FromReader returns parsed config data in some `f` from reader `r`.
