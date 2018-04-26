@@ -1,7 +1,6 @@
 package proxy
 
 import (
-	"errors"
 	"net"
 	"regexp"
 
