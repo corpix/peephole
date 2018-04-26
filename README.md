@@ -49,6 +49,28 @@ Configuration file could be presented in formats: `json`, `yaml`, `toml` and may
 > all configuration files in other formats are generated from configuration in Nix language, but
 > we will use config file in `json` as an example to keep things simple.
 
+Most simple example of configuration file is:
+
+``` json
+{
+  "Addr": "127.0.0.1:1338"
+}
+```
+
+This proxy is configured to:
+
+- listen on `127.0.0.1` port `1338`
+- allow anonymous access
+- allow connections anywhere
+
+------------------------------------------
+
+In some cases you might want to have two things:
+
+- authentication
+- whitelists
+- blacklists(but they are not implemented just yet)
+
 Here is an example of configuration describing the proxy for Telegram messenger, which was blocked in some countries.
 
 This proxy is configured to:

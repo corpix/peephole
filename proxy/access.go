@@ -16,7 +16,7 @@ type Access struct {
 }
 
 func (p *Access) Match(ctx context.Context, req *socks.Request) (context.Context, bool) {
-	res := false
+	res := len(p.addresses) == 0 && len(p.domains) == 0
 
 	if !res && req.DestAddr.FQDN != "" {
 		for _, domain := range p.domains {
