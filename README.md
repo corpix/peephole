@@ -8,7 +8,7 @@ Simple proxy server. Project is under development.
 What should be done before release:
 
 - [ ] Configuration reload with `SIGHUP`
-- [ ] Statsd metrics
+- [X] Statsd metrics
 - [ ] Loadtest
 - [ ] Docker container
 - [ ] Readme in russian
@@ -44,9 +44,10 @@ $ docker-compose up peephole
 
 ### Env variables
 
-- `ADDR` address in a format `0.0.0.0:9988` or `[::]:9988` to listen on
+- `LISTEN` address in a format `0.0.0.0:9988` or `[::]:9988` to listen on
 - `CONFIG` relative or absolute path to a configuration file(`json`, `yaml`, `toml` [formats supported](https://github.com/corpix/formats#formats))
 - `DEBUG` if set then run with `debug` log level
+- `STATSD_ADDRESSES` comma-separated list of `ip:port` or `host:port` of statsd servers to report runtime telemetry
 
 ### Configuration file
 
@@ -61,7 +62,7 @@ Most simple example of configuration file is:
 
 ``` json
 {
-  "Addr": "127.0.0.1:1338"
+  "Listen": "127.0.0.1:1338"
 }
 ```
 
@@ -93,7 +94,7 @@ This proxy is configured to:
 
 ``` json
 {
-  "Addr": "127.0.0.1:1338",
+  "Listen": "127.0.0.1:1338",
   "Proxy": {
     "Accounts": {
       "jarov": "g0t0gulag"
@@ -124,6 +125,22 @@ This proxy is configured to:
 ```
 
 > In case of regexps: don't forget to pay your attention to `^` and `$`
+
+#### Metrics
+
+If you have statsd endpoint available anywhere inside your infrastructure
+then you could tell peephole to write runtime telemetry into this statsd
+server/servers, here is a relevant peace of configuration:
+
+``` json
+{
+  "Proxy": {
+    "Metrics": {
+      "StatsdAddresses": [ "127.0.0.1:8125" ]
+    }
+  }
+}
+```
 
 ## Credits
 

@@ -4,7 +4,14 @@ import (
 	"context"
 	"net"
 
+	metrics "github.com/armon/go-metrics"
 	"github.com/corpix/loggers"
+)
+
+const (
+	// Name is an identifier which will be used to report metrics
+	// for this package if no alternative was providen.
+	Name = "socks"
 )
 
 // Params is used to setup and configure a Server.
@@ -31,6 +38,9 @@ type Params struct {
 
 	// Optional function for dialing out.
 	Dial func(ctx context.Context, network, addr string) (net.Conn, error)
+
+	// Metrics can be provided to report telemetry.
+	Metrics *metrics.Metrics
 }
 
 func ParamsWithDefaults(p Params) Params {
@@ -52,8 +62,16 @@ func ParamsWithDefaults(p Params) Params {
 		}
 	}
 
-	return p
+	if p.Metrics == nil {
+		// FIXME: It is safe to ignore an error here, but
+		// looks like shit, make it better?
+		p.Metrics, _ = metrics.New(
+			metrics.DefaultConfig(Name),
+			&metrics.BlackholeSink{},
+		)
+	}
 
+	return p
 }
 
 func NewParams(l loggers.Logger) Params {

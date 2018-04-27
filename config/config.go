@@ -23,7 +23,7 @@ var (
 // Config represents application configuration structure.
 type Config struct {
 	Logger logrus.Config `validate:"required" default:"{\"Level\": \"info\", \"Formatter\": \"text\"}"`
-	Addr   string        `validate:"required" default:"127.0.0.1:1080" env:"ADDR"`
+	Listen string        `validate:"required" default:"127.0.0.1:1080" env:"LISTEN"`
 	Proxy  proxy.Config
 }
 

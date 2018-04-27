@@ -4,6 +4,7 @@ import (
 	"net"
 	"regexp"
 
+	metrics "github.com/armon/go-metrics"
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
 
@@ -12,14 +13,18 @@ import (
 
 func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 	var (
+		p = socks.NewParams(l)
+
 		addresses = make([]IPNet, len(c.Whitelist.Addresses))
 		domains   = make([]*regexp.Regexp, len(c.Whitelist.Domains))
-		p         = socks.NewParams(l)
 
-		ipNet IPNet
-		r     *regexp.Regexp
-		err   error
+		ipNet       IPNet
+		matcher     *regexp.Regexp
+		metricsSink metrics.MetricSink
+		err         error
 	)
+
+	//
 
 	if len(c.Accounts) > 0 {
 		l.Printf(
@@ -27,11 +32,15 @@ func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 			len(c.Accounts),
 		)
 		p.Authenticators = []socks.Authenticator{
-			socks.UserPassAuthenticator{Credentials: socks.StaticCredentials(c.Accounts)},
+			socks.UserPassAuthenticator{
+				Credentials: socks.StaticCredentials(c.Accounts),
+			},
 		}
 	} else {
 		l.Print("Will NOT use authentication, has no accounts")
 	}
+
+	//
 
 	if len(c.Whitelist.Addresses) > 0 {
 		for k, v := range c.Whitelist.Addresses {
@@ -54,12 +63,12 @@ func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 
 	if len(c.Whitelist.Domains) > 0 {
 		for k, v := range c.Whitelist.Domains {
-			r, err = regexp.Compile(v)
+			matcher, err = regexp.Compile(v)
 			if err != nil {
 				return p, err
 			}
 
-			domains[k] = r
+			domains[k] = matcher
 		}
 
 		l.Printf(
@@ -75,6 +84,41 @@ func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 		domains:   domains,
 		log:       prefixwrapper.New("Access: ", l),
 	}
+
+	//
+
+	statsdAddressesCount := len(c.Metrics.StatsdAddresses)
+	switch {
+	case statsdAddressesCount == 0:
+		metricsSink = &metrics.BlackholeSink{}
+		l.Print("Will NOT report any metrics, no metrics endpoint configured")
+	case statsdAddressesCount == 1:
+		metricsSink, err = metrics.NewStatsdSink(c.Metrics.StatsdAddresses[0])
+		if err != nil {
+			return p, err
+		}
+		l.Printf("Will report metrics to %v", c.Metrics.StatsdAddresses)
+	default:
+		fanoutSink := make(metrics.FanoutSink, len(c.Metrics.StatsdAddresses))
+		for k, v := range c.Metrics.StatsdAddresses {
+			metricsSink, err = metrics.NewStatsdSink(v)
+			if err != nil {
+				return p, err
+			}
+			fanoutSink[k] = metricsSink
+		}
+		metricsSink = fanoutSink
+		l.Printf("Will report metrics to %v", c.Metrics.StatsdAddresses)
+	}
+	p.Metrics, err = metrics.New(
+		metrics.DefaultConfig(c.Metrics.ServiceName),
+		metricsSink,
+	)
+	if err != nil {
+		return p, err
+	}
+
+	//
 
 	return p, nil
 }

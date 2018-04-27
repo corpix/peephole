@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
@@ -61,6 +62,11 @@ func (s *Server) Serve(l net.Listener) error {
 			return err
 		}
 
+		s.log.Printf(
+			"Accepted new connection from '%s'",
+			conn.RemoteAddr(),
+		)
+
 		// FIXME: Pool
 		go s.serveConnection(conn)
 	}
@@ -70,6 +76,10 @@ func (s *Server) Serve(l net.Listener) error {
 
 // serveConnection serves a connection and logs errors.
 func (s *Server) serveConnection(conn net.Conn) {
+	defer s.Params.Metrics.MeasureSince(
+		[]string{"Server", "ServeConnection"},
+		time.Now(),
+	)
 	defer func() {
 		if r := recover(); r != nil {
 			s.log.Error(
@@ -80,6 +90,11 @@ func (s *Server) serveConnection(conn net.Conn) {
 			)
 		}
 	}()
+
+	// FIXME: Configurable deadlines
+	// conn.SetDeadline(t)
+	// conn.SetReadDeadline(t)
+	// conn.SetWriteDeadline(t)
 
 	err := s.ServeConnection(conn)
 	if err != nil {

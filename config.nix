@@ -6,7 +6,7 @@
 
   #Logger.Formatter = "json";
 
-  Addr = "127.0.0.1:1338";
+  Listen = "127.0.0.1:1338";
 
   Proxy = {
     Accounts."jarov" = "g0t0gulag";
@@ -36,5 +36,7 @@
         "^(.*\.)?telegram\.org$"
       ];
     };
+
+    Metrics.StatsdAddresses = [ "127.0.0.1:8125" ];
   };
 }

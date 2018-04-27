@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  branch = "master"
+  name = "github.com/armon/go-metrics"
+  packages = ["."]
+  revision = "783273d703149aaeb9897cf58613d5af48861c25"
+
+[[projects]]
   name = "github.com/caarlos0/env"
   packages = ["."]
   revision = "7cd7992b3bc86f920394f8de92c13900da1a46b7"
@@ -61,6 +67,18 @@
   packages = ["."]
   revision = "14984d91328f9612b58443cbdf4a077d4fd71091"
   version = "v9.15.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/go-immutable-radix"
+  packages = ["."]
+  revision = "7f3cd4390caab3250a57f30efdb2a65dd7649ecf"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hashicorp/golang-lru"
+  packages = ["simplelru"]
+  revision = "0fb14efe8c47ae851c0034ed7a448854d3d34cf3"
 
 [[projects]]
   name = "github.com/imdario/mergo"
@@ -125,6 +143,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "76b8eb9b3d7ef1728ffaf3ba935cacf9850cc3e87ac3ebc4b6629a4fbceca2b1"
+  inputs-digest = "fac538c389b03cbd59b46d2a3cde82350903ad764c72d002e3e748b59edfaf42"
   solver-name = "gps-cdcl"
   solver-version = 1

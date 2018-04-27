@@ -47,7 +47,7 @@ func RootAction(c *cli.Context) error {
 	server := socks.New(p)
 
 	for {
-		err = server.ListenAndServe("tcp", Config.Addr)
+		err = server.ListenAndServe("tcp", Config.Listen)
 		if err != nil {
 			log.Error(err)
 		}
