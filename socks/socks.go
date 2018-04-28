@@ -124,6 +124,11 @@ func (s *Server) ServeConnection(conn net.Conn) error {
 		return NewErrAuthenticationFailed(err)
 	}
 
+	s.Params.Metrics.IncrCounter(
+		[]string{"Server", "NewRequest"},
+		1,
+	)
+
 	request, err := NewRequest(bufConn)
 	if err != nil {
 		if err == unrecognizedAddrType {
