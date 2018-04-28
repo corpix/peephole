@@ -1,4 +1,5 @@
 /build
+/result-bin
 *~
 .tern-port
 *.prof
