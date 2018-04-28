@@ -3,6 +3,30 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/RouterScript/HTTPProxy"
+  packages = ["."]
+  revision = "3856617f113d8c40a03bb818a2f439e895579e16"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/RouterScript/ProxyClient"
+  packages = ["."]
+  revision = "5d0cc9e71d0cadee60d2b20678a1cd15be250f0e"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/RouterScript/SOCKSProxy"
+  packages = ["."]
+  revision = "c6abfe6bb0fd0cd183ecf601c85f07f60f354457"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/Yawning/chacha20"
+  packages = ["."]
+  revision = "e3b1f968fc6397b51d963fee8ec8711a47bc0ce8"
+
+[[projects]]
+  branch = "master"
   name = "github.com/armon/go-metrics"
   packages = ["."]
   revision = "783273d703149aaeb9897cf58613d5af48861c25"
@@ -34,6 +58,12 @@
   name = "github.com/corpix/reflect"
   packages = ["."]
   revision = "762e8fbf1f83a7e3e4ee34b7732a776b478ffc3f"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/corpix/uarand"
+  packages = ["."]
+  revision = "2b8494104d86337cdd41d0a49cbed8e4583c0ab4"
 
 [[projects]]
   name = "github.com/creasty/defaults"
@@ -81,6 +111,12 @@
   revision = "0fb14efe8c47ae851c0034ed7a448854d3d34cf3"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/icrowley/fake"
+  packages = ["."]
+  revision = "4178557ae428460c3780a381c824a1f3aceb6325"
+
+[[projects]]
   name = "github.com/imdario/mergo"
   packages = ["."]
   revision = "9d5f1277e9a8ed20c3684bda8fde67c05628518c"
@@ -102,6 +138,16 @@
   revision = "9fafd69674167c06933b1787ae235618431ce87f"
 
 [[projects]]
+  name = "github.com/shadowsocks/go-shadowsocks2"
+  packages = [
+    "core",
+    "shadowaead",
+    "shadowstream"
+  ]
+  revision = "1c9b29ca973062e12bad6b3807dc9c178cf07115"
+  version = "v0.0.9"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
@@ -116,7 +162,17 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
+  packages = [
+    "chacha20poly1305",
+    "curve25519",
+    "ed25519",
+    "ed25519/internal/edwards25519",
+    "hkdf",
+    "internal/chacha20",
+    "poly1305",
+    "ssh",
+    "ssh/terminal"
+  ]
   revision = "b0697eccbea9adec5b7ba8008f4c33d98d733388"
 
 [[projects]]
@@ -143,6 +199,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fac538c389b03cbd59b46d2a3cde82350903ad764c72d002e3e748b59edfaf42"
+  inputs-digest = "578f744dcc10df5aa6dde69b109624d711b3e559d4d6d88f0838e460147ac9c0"
   solver-name = "gps-cdcl"
   solver-version = 1
