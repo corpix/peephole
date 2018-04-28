@@ -7,4 +7,4 @@ test::
 
 .PHONY: statsd
 statsd:
-	docker run --rm -p 8125:8125/udp dasch/statsd-debug
+	docker run --rm -it --net=host atlassianlabs/gostatsd --backends stdout
