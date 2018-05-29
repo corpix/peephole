@@ -3,6 +3,7 @@ package socks
 import (
 	"context"
 	"net"
+	"time"
 
 	metrics "github.com/armon/go-metrics"
 	"github.com/corpix/loggers"
@@ -41,6 +42,12 @@ type Params struct {
 
 	// Metrics can be provided to report telemetry.
 	Metrics *metrics.Metrics
+
+	// ReadDeadlineDuration duration to construct ReadDeadline for conn.
+	ReadDeadlineDuration time.Duration
+
+	// WriteDeadlineDuration duration to construct WriteDeadline for conn.
+	WriteDeadlineDuration time.Duration
 }
 
 func ParamsWithDefaults(p Params) Params {
@@ -69,6 +76,14 @@ func ParamsWithDefaults(p Params) Params {
 			metrics.DefaultConfig(Name),
 			&metrics.BlackholeSink{},
 		)
+	}
+
+	if p.ReadDeadlineDuration == 0 {
+		p.ReadDeadlineDuration = 10 * time.Minute
+	}
+
+	if p.WriteDeadlineDuration == 0 {
+		p.WriteDeadlineDuration = 10 * time.Minute
 	}
 
 	return p

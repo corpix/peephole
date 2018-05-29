@@ -4,10 +4,10 @@ import (
 	"net"
 	"regexp"
 
-	metrics "github.com/armon/go-metrics"
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
 
+	"github.com/corpix/peephole/proxy/metrics"
 	"github.com/corpix/peephole/socks"
 )
 
@@ -18,10 +18,9 @@ func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 		addresses = make([]IPNet, len(c.Whitelist.Addresses))
 		domains   = make([]*regexp.Regexp, len(c.Whitelist.Domains))
 
-		ipNet       IPNet
-		matcher     *regexp.Regexp
-		metricsSink metrics.MetricSink
-		err         error
+		ipNet   IPNet
+		matcher *regexp.Regexp
+		err     error
 	)
 
 	//
@@ -79,43 +78,21 @@ func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 		l.Print("Will NOT use domain whitelists, has no domains")
 	}
 
+	//
+
+	m, err := metrics.New(c.Metrics, l)
+	if err != nil {
+		return p, err
+	}
+
+	p.Metrics = m
+
+	//
+
 	p.Rule = &Access{
 		addresses: addresses,
 		domains:   domains,
 		log:       prefixwrapper.New("Access: ", l),
-	}
-
-	//
-
-	statsdAddressesCount := len(c.Metrics.StatsdAddresses)
-	switch {
-	case statsdAddressesCount == 0:
-		metricsSink = &metrics.BlackholeSink{}
-		l.Print("Will NOT report any metrics, no metrics endpoint configured")
-	case statsdAddressesCount == 1:
-		metricsSink, err = metrics.NewStatsdSink(c.Metrics.StatsdAddresses[0])
-		if err != nil {
-			return p, err
-		}
-		l.Printf("Will report metrics to %v", c.Metrics.StatsdAddresses)
-	default:
-		fanoutSink := make(metrics.FanoutSink, len(c.Metrics.StatsdAddresses))
-		for k, v := range c.Metrics.StatsdAddresses {
-			metricsSink, err = metrics.NewStatsdSink(v)
-			if err != nil {
-				return p, err
-			}
-			fanoutSink[k] = metricsSink
-		}
-		metricsSink = fanoutSink
-		l.Printf("Will report metrics to %v", c.Metrics.StatsdAddresses)
-	}
-	p.Metrics, err = metrics.New(
-		metrics.DefaultConfig(c.Metrics.ServiceName),
-		metricsSink,
-	)
-	if err != nil {
-		return p, err
 	}
 
 	//

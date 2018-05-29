@@ -15,6 +15,7 @@ buildGo19Package rec {
     cp    go/bin/peephole $bin/bin
   '';
 
-  src = ./.;
+  #src = ./.;
+  src = /home/user/projects/src/github.com/corpix/peephole;
   goPackagePath = "github.com/corpix/peephole";
 }

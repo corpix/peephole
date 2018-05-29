@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
+	"sync/atomic"
 	"time"
 
 	"github.com/corpix/loggers"
@@ -20,6 +21,7 @@ const (
 type Server struct {
 	Params Params
 
+	conns       uint32
 	log         loggers.Logger
 	authMethods map[uint8]Authenticator
 }
@@ -74,15 +76,34 @@ func (s *Server) Serve(l net.Listener) error {
 	return nil
 }
 
+// handleError handles error with logger and reports it to statsd.
+func (s *Server) handleError(err error) {
+	s.log.Error(err)
+	s.Params.Metrics.IncrCounter(
+		[]string{"errors", "Server", fmt.Sprintf("%T", err)},
+		1,
+	)
+}
+
 // serveConnection serves a connection and logs errors.
 func (s *Server) serveConnection(conn net.Conn) {
 	defer s.Params.Metrics.MeasureSince(
 		[]string{"Server", "ServeConnection"},
 		time.Now(),
 	)
+
+	s.Params.Metrics.SetGauge(
+		[]string{"Server", "connections"},
+		float32(atomic.AddUint32(&s.conns, 1)),
+	)
+	defer s.Params.Metrics.SetGauge(
+		[]string{"Server", "connections"},
+		float32(atomic.AddUint32(&s.conns, ^uint32(0))),
+	)
+
 	defer func() {
 		if r := recover(); r != nil {
-			s.log.Error(
+			s.handleError(
 				NewErrServingConnection(
 					conn,
 					fmt.Errorf("%s", r),
@@ -91,14 +112,12 @@ func (s *Server) serveConnection(conn net.Conn) {
 		}
 	}()
 
-	// FIXME: Configurable deadlines
-	// conn.SetDeadline(t)
-	// conn.SetReadDeadline(t)
-	// conn.SetWriteDeadline(t)
+	conn.SetReadDeadline(time.Now().Add(s.Params.ReadDeadlineDuration))
+	conn.SetWriteDeadline(time.Now().Add(s.Params.WriteDeadlineDuration))
 
 	err := s.ServeConnection(conn)
 	if err != nil {
-		s.log.Error(NewErrServingConnection(conn, err))
+		s.handleError(NewErrServingConnection(conn, err))
 	}
 }
 
@@ -123,11 +142,6 @@ func (s *Server) ServeConnection(conn net.Conn) error {
 	if err != nil {
 		return NewErrAuthenticationFailed(err)
 	}
-
-	s.Params.Metrics.IncrCounter(
-		[]string{"Server", "NewRequest"},
-		1,
-	)
 
 	request, err := NewRequest(bufConn)
 	if err != nil {

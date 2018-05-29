@@ -1,11 +1,13 @@
 package cli
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/urfave/cli"
 
 	"github.com/corpix/peephole/proxy"
+	"github.com/corpix/peephole/proxy/metrics"
 	"github.com/corpix/peephole/socks"
 )
 
@@ -39,6 +41,11 @@ var (
 
 // RootAction is executing when program called without any subcommand.
 func RootAction(c *cli.Context) error {
+	m, err := metrics.New(Config.Proxy.Metrics, log)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	p, err := proxy.NewParams(Config.Proxy, log)
 	if err != nil {
 		log.Fatal(err)
@@ -50,6 +57,11 @@ func RootAction(c *cli.Context) error {
 		err = server.ListenAndServe("tcp", Config.Listen)
 		if err != nil {
 			log.Error(err)
+
+			m.IncrCounter(
+				[]string{"errors", fmt.Sprintf("%T", err)},
+				1,
+			)
 		}
 
 		time.Sleep(5 * time.Second)

@@ -26,7 +26,7 @@ in {
       };
       logger = mkOption {
         default = { level = "info"; format = "json"; };
-        type = attrsOf (submodule {
+        type = submodule ({ ... }: {
           options = {
             level = mkOption {
               type = enum [ "debug" "info" "error" ];
@@ -53,15 +53,19 @@ in {
         '';
       };
       proxy = mkOption {
-        type submodule {
+        type = submodule ({ ... }: {
           options = {
             accounts = mkOption {
               default = { };
               type = attrsOf str;
+              description = ''
+                Accounts in a form <user> = <password>.
+              '';
             };
+
             whitelist = mkOption {
               default = { };
-              type = attrsOf (submodule {
+              type = submodule ({ ... }: {
                 options = {
                   addresses = mkOption {
                     type = listOf str;
@@ -80,41 +84,55 @@ in {
                 };
               });
             };
-          };
-        }
-      };
-      metrics = mkOption {
-        type = submodule {
-          options = {
-            statsdAddresses = mkOption {
-              type = listOf str;
-              default = [];
+
+            metrics = mkOption {
+              type = submodule ({ ... }: {
+                options = {
+                  statsdAddresses = mkOption {
+                    type = listOf str;
+                    default = [];
+                    description = ''
+                      List of host:port statsd addresses to report metrics to.
+                    '';
+                  };
+                };
+              });
+              default = { };
               description = ''
-                List of host:port statsd addresses to report metrics to.
+                Metrics configuration which describes statsd server addresses, etc.
               '';
             };
           };
-        };
+        });
+        default = { };
+        description = ''
+          Proxy configuration which describes whitelisting, authentication, etc.
+        '';
       };
     };
   };
 
   config = mkIf cfg.enable {
-    users.extraUsers."${name}" = {
-      name = name;
-      group = cfg.group;
+    users.extraUsers = mkIf (name == cfg.user) {
+      "${name}" = {
+        name = name;
+        group = cfg.group;
+      };
     };
 
-    users.extraGroups."${name}" = { inherit name; };
+    users.extraGroups = mkIf (name == cfg.group) {
+      "${name}" = { inherit name; };
+    };
 
     systemd.services."${name}" = let
       configuration = {
-        Logger.Formatter          = cfg.logger.formatter;
-        Logger.Level              = cfg.logger.level;
-        Listen                    = cfg.listen;
-        Proxy.Whitelist.Addresses = cfg.proxy.whitelist.addresses;
-        Proxy.Whitelist.Domains   = cfg.proxy.whitelist.domains;
-        Metrics.StatsdAddresses   = cfg.metrics.statsdAddresses;
+        Logger.Format                 = cfg.logger.format;
+        Logger.Level                  = cfg.logger.level;
+        Listen                        = cfg.listen;
+        Proxy.Accounts                = cfg.proxy.accounts;
+        Proxy.Whitelist.Addresses     = cfg.proxy.whitelist.addresses;
+        Proxy.Whitelist.Domains       = cfg.proxy.whitelist.domains;
+        Proxy.Metrics.StatsdAddresses = cfg.proxy.metrics.statsdAddresses;
       };
     in {
       enable = true;
