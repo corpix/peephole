@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"net"
-	"sync/atomic"
+	"sync"
 	"time"
 
 	"github.com/corpix/loggers"
@@ -22,8 +22,10 @@ type Server struct {
 	Params Params
 
 	conns       uint32
+	connsLock   *sync.RWMutex
 	log         loggers.Logger
 	authMethods map[uint8]Authenticator
+	done        chan struct{}
 }
 
 // New creates a new Server.
@@ -31,12 +33,14 @@ func New(p Params) *Server {
 	var (
 		ps = ParamsWithDefaults(p)
 		s  = &Server{
-			Params: ps,
-			log:    prefixwrapper.New("Server: ", ps.Logger),
+			Params:    ps,
+			connsLock: &sync.RWMutex{},
+			log:       prefixwrapper.New("Server: ", ps.Logger),
 			authMethods: make(
 				map[uint8]Authenticator,
 				len(ps.Authenticators),
 			),
+			done: make(chan struct{}),
 		}
 	)
 
@@ -58,6 +62,9 @@ func (s *Server) ListenAndServe(network, addr string) error {
 
 // Serve is used to serve connections from a listener.
 func (s *Server) Serve(l net.Listener) error {
+	defer close(s.done)
+	go s.metricsWorker(s.done)
+
 	for {
 		conn, err := l.Accept()
 		if err != nil {
@@ -76,6 +83,28 @@ func (s *Server) Serve(l net.Listener) error {
 	return nil
 }
 
+// metricsWorker is a worker which emits some runtime metrics
+// to statistics gathering service.
+func (s *Server) metricsWorker(done <-chan struct{}) {
+	for {
+		select {
+		case <-done:
+			return
+		default:
+			s.connsLock.RLock()
+			connectionsNumber := s.conns
+			s.connsLock.RUnlock()
+
+			s.Params.Metrics.SetGauge(
+				[]string{"Server", "connections"},
+				float32(connectionsNumber),
+			)
+
+			time.Sleep(30 * time.Second)
+		}
+	}
+}
+
 // handleError handles error with logger and reports it to statsd.
 func (s *Server) handleError(err error) {
 	s.log.Error(err)
@@ -92,14 +121,28 @@ func (s *Server) serveConnection(conn net.Conn) {
 		time.Now(),
 	)
 
+	connectionNumber := uint32(0)
+
+	s.connsLock.Lock()
+	connectionNumber = s.conns + uint32(1)
+	s.conns = connectionNumber
+	s.connsLock.Unlock()
+
 	s.Params.Metrics.SetGauge(
 		[]string{"Server", "connections"},
-		float32(atomic.AddUint32(&s.conns, 1)),
+		float32(connectionNumber),
 	)
-	defer s.Params.Metrics.SetGauge(
-		[]string{"Server", "connections"},
-		float32(atomic.AddUint32(&s.conns, ^uint32(0))),
-	)
+	defer func() {
+		s.connsLock.Lock()
+		lastConnectionNumber := s.conns - uint32(1)
+		s.conns = lastConnectionNumber
+		s.connsLock.Unlock()
+
+		s.Params.Metrics.SetGauge(
+			[]string{"Server", "connections"},
+			float32(lastConnectionNumber),
+		)
+	}()
 
 	defer func() {
 		if r := recover(); r != nil {
