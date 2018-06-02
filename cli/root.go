@@ -58,6 +58,11 @@ func RootAction(c *cli.Context) error {
 		if err != nil {
 			log.Error(err)
 
+			switch e := err.(type) {
+			case socks.ErrServingConnection:
+				err = e.Err
+			}
+
 			m.IncrCounter(
 				[]string{"errors", fmt.Sprintf("%T", err)},
 				1,
