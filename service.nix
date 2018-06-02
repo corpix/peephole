@@ -147,6 +147,7 @@ in {
         ExecStart = "${pkg}/bin/${name} -c ${pkgs.writeText "config.json" (builtins.toJSON configuration)}";
         Restart = "on-failure";
         RestartSec = 1;
+        LimitNOFILE = 8192;
       };
     };
   };
