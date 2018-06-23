@@ -108,6 +108,12 @@ func (s *Server) metricsWorker(done <-chan struct{}) {
 // handleError handles error with logger and reports it to statsd.
 func (s *Server) handleError(err error) {
 	s.log.Error(err)
+
+	switch v := err.(type) {
+	case ErrServingConnection:
+		err = v.Err
+	}
+
 	s.Params.Metrics.IncrCounter(
 		[]string{"errors", "Server", fmt.Sprintf("%T", err)},
 		1,
