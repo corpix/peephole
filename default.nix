@@ -1,9 +1,9 @@
 with import <nixpkgs>{};
 { pkgs ? import <nixpkgs> {} }:
 
-buildGo19Package rec {
-  name = "peephole-unstable-${version}";
-  version = "development";
+buildGoPackage rec {
+  name = "peephole-${version}";
+  version = "1.0";
 
   buildInputs = with pkgs; [ git dep ];
 
@@ -15,7 +15,6 @@ buildGo19Package rec {
     cp    go/bin/peephole $bin/bin
   '';
 
-  #src = ./.;
-  src = /home/user/projects/src/github.com/corpix/peephole;
+  src = ./.;
   goPackagePath = "github.com/corpix/peephole";
 }
