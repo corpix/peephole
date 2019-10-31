@@ -20,11 +20,11 @@ func (c *socks4Client) Dial(network, address string) (remoteConn net.Conn, err e
 		return
 	}
 	request := &socks4Request{
-		command:commandConnect,
-		port:   port,
-		ip:     []byte{0, 0, 0, 1},
-		userId: []byte{},
-		fqdn:   host,
+		command: commandConnect,
+		port:    port,
+		ip:      []byte{0, 0, 0, 1},
+		userId:  []byte{},
+		fqdn:    host,
 	}
 	if c.isSOCKS4() {
 		request.ip, err = c.lookupIP(string(request.fqdn))
@@ -100,7 +100,7 @@ func (c *socks4Client) lookupIP(host string) (ip net.IP, err error) {
 		return
 	}
 	ip = ips[0]
-	if len(ip) != net.IPv4len {
+	if !isIPv4(ip) {
 		err = errors.New("IPv6 is not supported by SOCKS4.")
 		return
 	}

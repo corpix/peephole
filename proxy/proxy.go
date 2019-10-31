@@ -98,6 +98,7 @@ func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 
 	//
 
+	// FIXME: configurable
 	p.ReadDeadlineDuration = 15 * time.Second
 	p.WriteDeadlineDuration = 15 * time.Second
 

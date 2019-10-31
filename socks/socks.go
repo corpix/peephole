@@ -100,7 +100,8 @@ func (s *Server) metricsWorker(done <-chan struct{}) {
 				float32(connectionsNumber),
 			)
 
-			time.Sleep(30 * time.Second)
+			// FIXME: customizable flush interval for all metrics
+			time.Sleep(1 * time.Second)
 		}
 	}
 }

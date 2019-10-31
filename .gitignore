@@ -4,3 +4,9 @@
 .tern-port
 *.prof
 /.vendor
+/result*
+/peephole
+/profile
+/build
+/containers
+.personal.*
