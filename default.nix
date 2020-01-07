@@ -1,11 +1,9 @@
-with import <nixpkgs>{};
 { pkgs ? import <nixpkgs> {} }:
-
-buildGoPackage rec {
+with pkgs; buildGoPackage rec {
   name = "peephole-${version}";
   version = "1.0";
 
-  buildInputs = with pkgs; [ git dep ];
+  buildInputs = [ git dep ];
 
   installPhase = ''
     source $stdenv/setup
