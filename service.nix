@@ -5,7 +5,7 @@ with lib;
 let
   name = "peephole";
   cfg = config.services."${name}";
-  pkg = (pkgs.callPackage ./default.nix { }).bin;
+  pkg = pkgs.callPackage ./default.nix { };
 in {
   options = with types; {
     services."${name}" = {

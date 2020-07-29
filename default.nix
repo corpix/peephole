@@ -9,8 +9,8 @@ with pkgs; buildGoPackage rec {
     source $stdenv/setup
     set -e
 
-    mkdir -p              $bin/bin
-    cp    go/bin/peephole $bin/bin
+    mkdir -p              $out/bin
+    cp    go/bin/peephole $out/bin
   '';
 
   src = ./.;
