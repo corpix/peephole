@@ -62,7 +62,6 @@ func (s *Server) ListenAndServe(network, addr string) error {
 
 // Serve is used to serve connections from a listener.
 func (s *Server) Serve(l net.Listener) error {
-	defer close(s.done)
 	go s.metricsWorker(s.done)
 
 	for {
