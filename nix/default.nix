@@ -1,18 +1,9 @@
 { pkgs ? import <nixpkgs> {} }:
-with pkgs; buildGoPackage rec {
-  name = "peephole-${version}";
+with pkgs; buildGoModule rec {
+  pname = "peephole";
   version = "1.0";
 
-  buildInputs = [ git dep ];
+  src = ./..;
 
-  installPhase = ''
-    source $stdenv/setup
-    set -e
-
-    mkdir -p              $out/bin
-    cp    go/bin/peephole $out/bin
-  '';
-
-  src = ./.;
-  goPackagePath = "github.com/corpix/peephole";
+  vendorSha256 = null;
 }
