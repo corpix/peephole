@@ -3,14 +3,11 @@
         "rw": ["."],
         "ro": [
             "~/.emacs.d",
-            "~/.spacemacs",
             "~/.gitconfig"
         ],
-        "tmpfs": ["~", "~/.emacs.d/.cache"]
+        "tmpfs": ["~"]
     },
     "environment": {
-        "PATH":     "$HOME/.local/bin:$HOME/projects/bin:$PATH",
-        "NIX_PATH": "$NIX_PATH",
-        "GOPATH":   "$HOME/projects"
+        "NIX_PATH": "$NIX_PATH"
     }
 }
