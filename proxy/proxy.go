@@ -3,6 +3,7 @@ package proxy
 import (
 	"net"
 	"regexp"
+	"time"
 
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
@@ -96,6 +97,9 @@ func NewParams(c Config, l loggers.Logger) (socks.Params, error) {
 	}
 
 	//
+
+	p.ReadDeadlineDuration = 15 * time.Second
+	p.WriteDeadlineDuration = 15 * time.Second
 
 	return p, nil
 }
