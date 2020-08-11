@@ -6,6 +6,7 @@ import (
 	"net"
 	"sync"
 	"time"
+	"io"
 
 	"github.com/corpix/loggers"
 	"github.com/corpix/loggers/logger/prefixwrapper"
@@ -188,6 +189,9 @@ func (s *Server) ServeConnection(conn net.Conn) error {
 
 	authContext, err := s.authenticate(conn, bufConn)
 	if err != nil {
+		if err == io.EOF {
+			return nil
+		}
 		return NewErrAuthenticationFailed(err)
 	}
 
