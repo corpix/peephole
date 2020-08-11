@@ -10,6 +10,11 @@ in {
   options = with types; {
     services."${name}" = {
       enable = mkEnableOption "Peephole, crypto currency exchange data spy";
+      limitNoFile = mkOption {
+        default = 16000;
+        type = int;
+        description = "FDs limit";
+      };
       user = mkOption {
         default = name;
         type = str;
@@ -147,7 +152,10 @@ in {
         ExecStart = "${pkg}/bin/${name} -c ${pkgs.writeText "config.json" (builtins.toJSON configuration)}";
         Restart = "on-failure";
         RestartSec = 1;
-        LimitNOFILE = 8192;
+        LimitAS = "infinity";
+        LimitRSS = "infinity";
+        LimitCORE = "infinity";
+        LimitNOFILE = cfg.limitNoFile;
       };
     };
   };
