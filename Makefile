@@ -102,7 +102,7 @@ build/%: # build specified app
 	$(info == building $*)
 	@mkdir -p $(build_dir)
 	go build -o $@ --ldflags                          \
-		"-X $(pkg_prefix)/cli.version=$(VERSION)" \
+		"-X $(pkg_prefix)/cli.Version=$(VERSION)" \
 		./$*/$*.go
 
 .PHONY: build

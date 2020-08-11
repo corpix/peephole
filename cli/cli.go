@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	version = "development"
+	Version = "development"
 
 	// log is a application-wide logger.
 	log loggers.Logger
@@ -72,7 +72,7 @@ func Execute() {
 	app.Flags = RootFlags
 	app.Commands = RootCommands
 	app.Before = Prerun
-	app.Version = version
+	app.Version = Version
 
 	err := app.Run(os.Args)
 	if err != nil {
