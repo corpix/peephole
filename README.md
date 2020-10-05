@@ -14,8 +14,8 @@ What should be done before release:
 
 > You will need Go >=1.9
 ``` console
-$ go get github.com/corpix/peephole
-$ cd $GOPATH/src/github.com/corpix/peephole
+$ git clone https://github.com/corpix/peephole
+$ cd peephole
 ```
 
 ## Run
@@ -23,7 +23,7 @@ $ cd $GOPATH/src/github.com/corpix/peephole
 > Will look for `config.yaml` in current directory by default.
 
 ``` console
-$ go run ./peephole/peephole.go --debug
+$ go run ./main.go
 ```
 
 ### Docker
