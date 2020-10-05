@@ -1,8 +1,6 @@
 peephole
 ---------
 
-[![Build Status](https://travis-ci.org/corpix/peephole.svg?branch=master)](https://travis-ci.org/corpix/peephole)
-
 Simple proxy server. Project is under development.
 
 What should be done before release:
@@ -10,8 +8,7 @@ What should be done before release:
 - [ ] Configuration reload with `SIGHUP`
 - [X] Statsd metrics
 - [ ] Loadtest
-- [ ] Docker container
-- [ ] Readme in russian
+- [X] Docker container
 
 ## Get
 
@@ -23,7 +20,7 @@ $ cd $GOPATH/src/github.com/corpix/peephole
 
 ## Run
 
-> Will look for `config.json` in current directory by default.
+> Will look for `config.yaml` in current directory by default.
 
 ``` console
 $ go run ./peephole/peephole.go --debug
@@ -44,23 +41,19 @@ $ docker-compose up peephole
 
 ### Env variables
 
-- `LISTEN` address in a format `0.0.0.0:9988` or `[::]:9988` to listen on
-- `CONFIG` relative or absolute path to a configuration file(`json`, `yaml`, `toml` [formats supported](https://github.com/corpix/formats#formats))
-- `DEBUG` if set then run with `debug` log level
-- `STATSD_ADDRESSES` comma-separated list of `ip:port` or `host:port` of statsd servers to report runtime telemetry
+- `PEEPHOLE_LISTEN` address in a format `0.0.0.0:9988` or `[::]:9988` to listen on
+- `PEEPHOLE_CONFIG` relative or absolute path to a configuration file(`json`, `yaml`, `toml` [formats supported](https://github.com/corpix/formats#formats))
+- `PEEPHOLE_LOG_LEVEL` set log level to one of `debug|info|warn|error`
+- `PEEPHOLE_PROXY_METRICS_STATSDADDRESSES` comma-separated list of `ip:port` or `host:port` of statsd servers to report runtime telemetry
 
 ### Configuration file
 
-Configuration file could be presented in formats: `json`, `yaml`, `toml` and maybe other formats which is supported [by this package](https://github.com/corpix/formats#formats). 
-
-> We determine what format to use by file extension. <br/>
-> In development `config.nix` is used as a «single point of trust»,
-> all configuration files in other formats are generated from configuration in Nix language, but
-> we will use config file in `json` as an example to keep things simple.
-
 Most simple example of configuration file is:
 
-``` json
+> This tool supports yaml configuration, however, json is more convenient to present and because json is fully interchangeable
+> with yaml we will use it as an example.
+
+``` yaml
 {
   "Listen": "127.0.0.1:1338"
 }
@@ -92,7 +85,7 @@ This proxy is configured to:
 - allow connections to the telegram networks addresses, where addresses are in [CIDR format](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing)
 - allow connections to the telegram domains, where domains are [Go regexps](https://golang.org/pkg/regexp/syntax/#hdr-Syntax)
 
-``` json
+``` yaml
 {
   "Listen": "127.0.0.1:1338",
   "Proxy": {
@@ -132,7 +125,7 @@ If you have statsd endpoint available anywhere inside your infrastructure
 then you could tell peephole to write runtime telemetry into this statsd
 server/servers, here is a relevant peace of configuration:
 
-``` json
+``` yaml
 {
   "Proxy": {
     "Metrics": {

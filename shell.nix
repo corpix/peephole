@@ -1,33 +1,43 @@
-let
-  nixpkgs = builtins.fetchTarball {
-    # https://github.com/NixOS/nixpkgs/tags
-    # $ nix-prefetch-url --unpack url
-    #   hash...
-    url    = "https://github.com/NixOS/nixpkgs/archive/96d00ea0d9860b8bfba816b8ed21a98175a6a961.tar.gz";
-    sha256 = "00zbcihpcvx8l5p7gl2n65z46r4rn5lkwrvgsf3nsl9gxv8vrm8z";
-  };
-in with import nixpkgs { };
-let
+let nixpkgs = <nixpkgs>;
+    config = {};
+in with import nixpkgs { inherit config; }; let
   shellWrapper = writeScript "shell-wrapper" ''
     #! ${stdenv.shell}
-    exec -a shell ${fish}/bin/fish "$@"
+    set -e
+
+    exec -a shell ${fish}/bin/fish --login --interactive --init-command='
+      set -x root '"$root"'
+      set config $root/.fish.conf
+      set personal_config $root/.personal.fish.conf
+      if test -e $personal_config
+        source $personal_config
+      end
+      if test -e $config
+        source $config
+      end
+    ' "$@"
   '';
-in stdenv.mkDerivation {
+in stdenv.mkDerivation rec {
   name = "nix-shell";
-  buildInputs = with pkgs; [
-    glibcLocales man nix cacert coreutils git gnumake
-    tmux jq docker skopeo
-    curl utillinux bash-completion
-    go gopls golangci-lint
-    gnumake clang pkgconfig
+  buildInputs = [
+    glibcLocales bashInteractive man
+    nix cacert curl utillinux coreutils
+    git jq tmux findutils gnumake
+
+    go gopls
   ];
   shellHook = ''
-    export REPO_ROOT=$(git rev-parse --show-toplevel)
+    export root=$(pwd)
 
+    if [ -f "$root/.env" ]
+    then
+      source "$root/.env"
+    fi
+
+    export LANG="en_US.UTF-8"
     export SHELL="${shellWrapper}"
-    export LANG=en_US.UTF-8
     export NIX_PATH="nixpkgs=${nixpkgs}"
 
-    unset GOPATH
+    exec "$SHELL"
   '';
 }

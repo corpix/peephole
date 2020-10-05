@@ -1,9 +1,0 @@
-package: github.com/corpix/reflect
-import:
-- package: github.com/davecgh/go-spew
-  subpackages:
-  - spew
-testImport:
-- package: github.com/stretchr/testify
-  subpackages:
-  - assert

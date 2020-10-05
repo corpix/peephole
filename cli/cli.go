@@ -2,58 +2,109 @@ package cli
 
 import (
 	"fmt"
-	builtinLogger "log"
 	"os"
-	"runtime/pprof"
-	"runtime/trace"
 	"time"
 
-	"github.com/corpix/loggers"
-	"github.com/corpix/loggers/logger/logrus"
-	"github.com/davecgh/go-spew/spew"
-	"github.com/urfave/cli"
+	cli "github.com/urfave/cli/v2"
+	di "go.uber.org/dig"
 
-	"github.com/corpix/peephole/config"
+	"github.com/corpix/peephole/pkg/config"
+	"github.com/corpix/peephole/pkg/errors"
+	"github.com/corpix/peephole/pkg/log"
+	"github.com/corpix/peephole/pkg/proxy"
+	"github.com/corpix/peephole/pkg/proxy/metrics"
+	"github.com/corpix/peephole/pkg/socks"
 )
 
 var (
 	Version = "development"
 
-	// log is a application-wide logger.
-	log loggers.Logger
+	Stdout = os.Stdout
+	Stderr = os.Stderr
 
-	// Config is a container that represents the current application configuration.
-	Config config.Config
+	Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name: "log-level",
+			Aliases: []string{
+				"l",
+			},
+			Usage: "logging level (debug, info, error)",
+			Value: "info",
+		},
+		&cli.StringFlag{
+			Name:    "config",
+			Aliases: []string{"c"},
+			EnvVars: []string{config.EnvironPrefix + "_CONFIG"},
+			Usage:   "path to application configuration file",
+			Value:   "config.yaml",
+		},
+		&cli.BoolFlag{
+			Name:  "profile",
+			Usage: "write profile information for debugging(cpu.prof, heap.prof)",
+		},
+		&cli.BoolFlag{
+			Name:  "trace",
+			Usage: "write trace information for debugging(trace.prof)",
+		},
+	}
+	Commands = []*cli.Command{
+		&cli.Command{
+			Name:    "config",
+			Aliases: []string{"c"},
+			Usage:   "Configuration Tools",
+			Subcommands: []*cli.Command{
+				&cli.Command{
+					Name:    "show-default",
+					Aliases: []string{"sd"},
+					Usage:   "Show default configuration",
+					Action:  ConfigShowDefaultAction,
+				},
+				&cli.Command{
+					Name:    "show",
+					Aliases: []string{"s"},
+					Usage:   "Show default configuration",
+					Action:  ConfigShowAction,
+				},
+			},
+		},
+	}
+
+	c *di.Container
 )
 
-// Prerun configures application before running and executing from urfave/cli.
-func Prerun(c *cli.Context) error {
+func Before(ctx *cli.Context) error {
 	var err error
 
-	err = initConfig(c)
+	c = di.New()
+
+	err = c.Provide(func() *cli.Context { return ctx })
 	if err != nil {
 		return err
 	}
 
-	err = initLogger(c)
+	err = c.Provide(func(ctx *cli.Context) (*config.Config, error) {
+		return config.Load(ctx.String("config"))
+	})
 	if err != nil {
 		return err
 	}
 
-	if c.Bool("debug") {
-		fmt.Println("Dumping configuration structure")
-		spew.Dump(Config)
+	err = c.Provide(func(c *config.Config) (log.Logger, error) {
+		return log.Create(c.Log)
+	})
+	if err != nil {
+		return err
 	}
 
-	if c.Bool("profile") {
-		err = writeProfile()
+	if ctx.Bool("profile") {
+		err = c.Invoke(writeProfile)
 		if err != nil {
 			return err
 		}
 	}
 
-	if c.Bool("trace") {
-		err = writeTrace()
+	if ctx.Bool("trace") {
+		err = c.Invoke(writeTrace)
 		if err != nil {
 			return err
 		}
@@ -62,102 +113,79 @@ func Prerun(c *cli.Context) error {
 	return nil
 }
 
-// Execute adds all child commands to the root command sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	app := cli.NewApp()
-	app.Name = "peephole"
-	app.Usage = "Simple proxy"
+func ConfigShowDefaultAction(ctx *cli.Context) error {
+	c, err := config.Default()
+	if err != nil {
+		return err
+	}
+
+	return config.Show(c)
+}
+
+func ConfigShowAction(ctx *cli.Context) error {
+	c, err := config.Load(ctx.String("config"))
+	if nil != err {
+		return err
+	}
+
+	return config.Show(c)
+}
+
+func RootAction(ctx *cli.Context) error {
+	var err error
+
+	err = c.Provide(func(c *config.Config, l log.Logger) (*metrics.Metrics, error) {
+		return metrics.Create(*c.Proxy.Metrics, l)
+	})
+	if err != nil {
+		return err
+	}
+
+	err = c.Provide(func(c *config.Config, m *metrics.Metrics, l log.Logger) (proxy.Params, error) {
+		return proxy.CreateParams(*c.Proxy, m, l)
+	})
+	if err != nil {
+		return err
+	}
+
+	return c.Invoke(func(c *config.Config, p proxy.Params, m *metrics.Metrics, l log.Logger) {
+		l.Info().Msg("running")
+
+		server := socks.New(p)
+
+		for {
+			err = server.ListenAndServe("tcp", c.Listen)
+			if err != nil {
+				log.Error().Err(err)
+
+				switch e := err.(type) {
+				case socks.ErrServingConnection:
+					err = e.Err
+				}
+
+				m.IncrCounter(
+					[]string{"errors", fmt.Sprintf("%T", err)},
+					1,
+				)
+			}
+
+			time.Sleep(1 * time.Second)
+		}
+	})
+}
+
+func NewApp() *cli.App {
+	app := &cli.App{}
+	app.Before = Before
+	app.Flags = Flags
 	app.Action = RootAction
-	app.Flags = RootFlags
-	app.Commands = RootCommands
-	app.Before = Prerun
-	app.Version = Version
-
-	err := app.Run(os.Args)
-	if err != nil {
-		builtinLogger.Fatal(err)
-	}
+	app.Commands = Commands
+	return app
 }
 
-// writeProfile writes cpu and heap profile into files.
-func writeProfile() error {
-	cpu, err := os.Create("cpu.prof")
+func Run() {
+	err := NewApp().Run(os.Args)
 	if err != nil {
-		return err
+		errors.Fatal(err)
 	}
-	heap, err := os.Create("heap.prof")
-	if err != nil {
-		return err
-	}
-
-	pprof.StartCPUProfile(cpu)
-	go func() {
-		defer cpu.Close()
-		defer heap.Close()
-
-		log.Print("Profiling, will exit in 30 seconds")
-		time.Sleep(30 * time.Second)
-		pprof.StopCPUProfile()
-		pprof.WriteHeapProfile(heap)
-
-		os.Exit(0)
-	}()
-
-	return nil
-}
-
-// writeTrace writes tracing data to file.
-func writeTrace() error {
-	t, err := os.Create("trace.prof")
-	if err != nil {
-		return err
-	}
-
-	trace.Start(t)
-	go func() {
-		defer t.Close()
-
-		log.Print("Tracing, will exit in 30 seconds")
-		time.Sleep(30 * time.Second)
-		trace.Stop()
-
-		os.Exit(0)
-	}()
-
-	return nil
-}
-
-// initConfig reads in config file.
-func initConfig(ctx *cli.Context) error {
-	var (
-		path = os.ExpandEnv(ctx.String("config"))
-		err  error
-	)
-
-	Config, err = config.FromFile(path)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// initLogger inits logger component with
-// parameters from config.
-func initLogger(c *cli.Context) error {
-	var (
-		err error
-	)
-
-	if c.Bool("debug") {
-		Config.Logger.Level = "debug"
-	}
-
-	log, err = logrus.NewFromConfig(logrus.Config(Config.Logger))
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

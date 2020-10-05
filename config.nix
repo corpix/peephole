@@ -2,17 +2,17 @@
   # Example configuration to proxy telegram messenger traffic.
   # It will allow an authenticated user with login "jarov" and
   # password "g0t0gulag"(all coincidences with reality are accidental)
-  # to connect to hosts which was specified in Targets.
+  # to connect to hosts which was specified in `targets`.
 
-  #Logger.Formatter = "json";
 
-  Listen = "127.0.0.1:1338";
+  log.level = "debug";
+  listen = "127.0.0.1:1338";
 
-  Proxy = {
-    Accounts."jarov" = "g0t0gulag";
+  proxy = {
+    accounts."jarov" = "g0t0gulag";
 
-    Whitelist = {
-      Addresses = [
+    whitelist = {
+      addresses = [
         # https://core.telegram.org/resources/cidr.txt
         "149.154.167.99/32"
         "149.154.175.10/32"
@@ -61,12 +61,12 @@
         "2001:67c:4e8::/48"
       ];
 
-      Domains = [
+      domains = [
         "^(.*\.)?t\.me$"
         "^(.*\.)?telegram\.org$"
       ];
     };
 
-    Metrics.StatsdAddresses = [ "127.0.0.1:8125" ];
+    #metrics.statsdaddresses = [ "127.0.0.1:8125" ];
   };
 }
