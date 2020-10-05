@@ -1,9 +1,6 @@
 { pkgs ? import <nixpkgs> {} }:
 with pkgs; buildGoModule rec {
-  pname = "peephole";
-  version = "1.0";
-
+  name = "peephole";
   src = ./..;
-
   vendorSha256 = null;
 }
