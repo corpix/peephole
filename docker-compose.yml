@@ -5,10 +5,9 @@ services:
     build: .
     volumes:
       - ./build/peephole:/usr/bin/peephole:ro
-      - ./config.json:/etc/peephole/config.json:ro
+      - ./config.yaml:/etc/peephole/config.yaml:ro
     command: >-
       /usr/bin/peephole
-      --config /etc/peephole/config.json
-      --debug
+      --config /etc/peephole/config.yaml
     ports: []
     links: []
